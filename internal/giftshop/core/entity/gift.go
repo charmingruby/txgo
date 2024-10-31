@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
@@ -22,14 +20,13 @@ type NewGiftInput struct {
 
 func NewGift(in NewGiftInput) (*Gift, error) {
 	g := Gift{
-		id:            core.NewID(),
 		name:          in.name,
 		message:       in.message,
 		senderEmail:   in.senderEmail,
 		receiverEmail: in.receiverEmail,
 		status:        GIFT_STATUS_PENDING,
 		payment:       nil,
-		createdAt:     time.Now(),
+		BaseEntity:    core.NewBaseEntity(),
 	}
 
 	if err := g.validate(); err != nil {
@@ -41,14 +38,13 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 
 func NewGiftFrom(in Gift) *Gift {
 	return &Gift{
-		id:            in.id,
 		name:          in.name,
 		message:       in.message,
 		receiverEmail: in.receiverEmail,
 		senderEmail:   in.senderEmail,
 		status:        in.status,
 		payment:       in.payment,
-		createdAt:     in.createdAt,
+		BaseEntity:    in.BaseEntity,
 	}
 }
 
@@ -69,12 +65,12 @@ func (g *Gift) validate() error {
 }
 
 type Gift struct {
-	id            string
+	core.BaseEntity
+
 	name          string
 	message       string
 	receiverEmail string
 	senderEmail   string
 	status        string
 	payment       *Payment
-	createdAt     time.Time
 }
