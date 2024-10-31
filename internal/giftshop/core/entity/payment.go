@@ -35,6 +35,7 @@ func NewPayment(in NewPaymentInput) (*Payment, error) {
 		totalValueInCents:   in.totalValueInCents,
 		appliedPoints:       in.appliedPoints,
 		status:              PAYMENT_STATUS_PENDING,
+		transaction:         nil,
 		BaseEntity:          core.NewBaseEntity(),
 	}
 
@@ -54,6 +55,7 @@ func NewPaymentFrom(in Payment) *Payment {
 		totalValueInCents:   in.totalValueInCents,
 		appliedPoints:       in.appliedPoints,
 		status:              PAYMENT_STATUS_PENDING,
+		transaction:         in.transaction,
 		BaseEntity:          in.BaseEntity,
 	}
 }
@@ -129,4 +131,5 @@ type Payment struct {
 	totalValueInCents   int
 	appliedPoints       int
 	status              string
+	transaction         *Transaction
 }
