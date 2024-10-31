@@ -10,7 +10,6 @@ import (
 func Test_NewGift(t *testing.T) {
 	dummyName := "dummy gift name"
 	dummyMessage := "dummy gift message"
-	dummyAmountInCents := 10000
 	dummyReceiverEmail := "receiver@email.com"
 	dummySenderEmail := "sender@email.com"
 
@@ -21,7 +20,6 @@ func Test_NewGift(t *testing.T) {
 				message:       dummyMessage,
 				senderEmail:   dummySenderEmail,
 				receiverEmail: dummyReceiverEmail,
-				amountInCents: dummyAmountInCents,
 			},
 		)
 
@@ -30,7 +28,7 @@ func Test_NewGift(t *testing.T) {
 		assert.Equal(t, dummyMessage, gift.message)
 		assert.Equal(t, dummySenderEmail, gift.senderEmail)
 		assert.Equal(t, dummyReceiverEmail, gift.receiverEmail)
-		assert.Equal(t, dummyAmountInCents, gift.amountInCents)
+		assert.Equal(t, GIFT_STATUS_PENDING, gift.status)
 	})
 
 	t.Run("it should be not able to create a gift with empty name", func(t *testing.T) {
@@ -40,7 +38,6 @@ func Test_NewGift(t *testing.T) {
 				message:       dummyMessage,
 				senderEmail:   dummySenderEmail,
 				receiverEmail: dummyReceiverEmail,
-				amountInCents: dummyAmountInCents,
 			},
 		)
 
@@ -56,7 +53,6 @@ func Test_NewGift(t *testing.T) {
 				message:       dummyMessage,
 				senderEmail:   "",
 				receiverEmail: dummyReceiverEmail,
-				amountInCents: dummyAmountInCents,
 			},
 		)
 
@@ -72,29 +68,11 @@ func Test_NewGift(t *testing.T) {
 				message:       dummyMessage,
 				senderEmail:   dummySenderEmail,
 				receiverEmail: "",
-				amountInCents: dummyAmountInCents,
 			},
 		)
 
 		assert.Nil(t, gift)
 		assert.Error(t, err)
 		assert.Equal(t, err.Error(), core_err.NewEntityErr("receiverEmail is required").Error())
-	})
-
-	t.Run("it should be not able to create a gift with amount value lower than 0", func(t *testing.T) {
-		gift, err := NewGift(
-			NewGiftInput{
-				name:          dummyName,
-				message:       dummyMessage,
-				senderEmail:   dummySenderEmail,
-				receiverEmail: dummyReceiverEmail,
-				amountInCents: -2,
-			},
-		)
-
-		assert.Nil(t, gift)
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("amount must be greater than 0").Error())
-
 	})
 }

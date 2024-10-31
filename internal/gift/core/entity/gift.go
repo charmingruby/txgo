@@ -7,12 +7,17 @@ import (
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
 
+const (
+	GIFT_STATUS_PENDING  = "PENDING"
+	GIFT_STATUS_SENT     = "SENT"
+	GIFT_STATUS_ACCEPTED = "ACCEPTED"
+)
+
 type NewGiftInput struct {
 	name          string
 	message       string
 	senderEmail   string
 	receiverEmail string
-	amountInCents int
 }
 
 func NewGift(in NewGiftInput) (*Gift, error) {
@@ -22,7 +27,7 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 		message:       in.message,
 		senderEmail:   in.senderEmail,
 		receiverEmail: in.receiverEmail,
-		amountInCents: in.amountInCents,
+		status:        GIFT_STATUS_PENDING,
 		createdAt:     time.Now(),
 	}
 
@@ -46,10 +51,6 @@ func (g *Gift) validate() error {
 		return core_err.NewEntityErr("receiverEmail is required")
 	}
 
-	if g.amountInCents <= 0 {
-		return core_err.NewEntityErr("amount must be greater than 0")
-	}
-
 	return nil
 }
 
@@ -59,6 +60,7 @@ type Gift struct {
 	message       string
 	receiverEmail string
 	senderEmail   string
-	amountInCents int
+	status        string
+	payment       Payment
 	createdAt     time.Time
 }
