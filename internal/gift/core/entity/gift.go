@@ -28,6 +28,7 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 		senderEmail:   in.senderEmail,
 		receiverEmail: in.receiverEmail,
 		status:        GIFT_STATUS_PENDING,
+		payment:       nil,
 		createdAt:     time.Now(),
 	}
 
@@ -36,6 +37,19 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 	}
 
 	return &g, nil
+}
+
+func NewGiftFrom(in Gift) *Gift {
+	return &Gift{
+		id:            in.id,
+		name:          in.name,
+		message:       in.message,
+		receiverEmail: in.receiverEmail,
+		senderEmail:   in.senderEmail,
+		status:        in.status,
+		payment:       in.payment,
+		createdAt:     in.createdAt,
+	}
 }
 
 func (g *Gift) validate() error {
@@ -61,6 +75,6 @@ type Gift struct {
 	receiverEmail string
 	senderEmail   string
 	status        string
-	payment       Payment
+	payment       *Payment
 	createdAt     time.Time
 }
