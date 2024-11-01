@@ -6,37 +6,26 @@ import (
 )
 
 const (
-	PAYMENT_METHOD_CREDIT_CARD = "CREDIT_CARD"
-	PAYMENT_METHOD_CASH        = "CASH"
-	PAYMENT_METHOD_PIX         = "PIX"
-	PAYMENT_METHOD_POINTS      = "POINTS"
-
 	PAYMENT_STATUS_PENDING = "PENDING"
 	PAYMENT_STATUS_PAID    = "PAID"
 	PAYMENT_STATUS_FAILED  = "FAILED"
-
-	PAYMENT_POINTS_TO_CURRENCY_CENTS = 100
 )
 
 type NewPaymentInput struct {
-	method            string
-	installments      int
-	taxPercent        int
-	totalValueInCents int
-	appliedPoints     int
+	installments     int
+	taxPercent       int
+	totalValuePoints int
 }
 
 func NewPayment(in NewPaymentInput) (*Payment, error) {
 	g := Payment{
-		method:              in.method,
-		installments:        in.installments,
-		taxPercent:          in.taxPercent,
-		partialValueInCents: 0,
-		totalValueInCents:   in.totalValueInCents,
-		appliedPoints:       in.appliedPoints,
-		status:              PAYMENT_STATUS_PENDING,
-		transaction:         nil,
-		BaseEntity:          core.NewBaseEntity(),
+		installments:       in.installments,
+		taxPercent:         in.taxPercent,
+		partialValuePoints: 0,
+		totalValuePoints:   in.totalValuePoints,
+		status:             PAYMENT_STATUS_PENDING,
+		transaction:        nil,
+		BaseEntity:         core.NewBaseEntity(),
 	}
 
 	if err := g.validate(); err != nil {
@@ -48,88 +37,44 @@ func NewPayment(in NewPaymentInput) (*Payment, error) {
 
 func NewPaymentFrom(in Payment) *Payment {
 	return &Payment{
-		method:              in.method,
-		installments:        in.installments,
-		taxPercent:          in.taxPercent,
-		partialValueInCents: in.partialValueInCents,
-		totalValueInCents:   in.totalValueInCents,
-		appliedPoints:       in.appliedPoints,
-		status:              PAYMENT_STATUS_PENDING,
-		transaction:         in.transaction,
-		BaseEntity:          in.BaseEntity,
+		installments:       in.installments,
+		taxPercent:         in.taxPercent,
+		partialValuePoints: in.partialValuePoints,
+		totalValuePoints:   in.totalValuePoints,
+		status:             PAYMENT_STATUS_PENDING,
+		transaction:        in.transaction,
+		BaseEntity:         in.BaseEntity,
 	}
 }
 
 func (p *Payment) validate() error {
-	if !p.isPaymentMethodValid() {
-		return core_err.NewEntityErr("invalid payment method")
-	}
-
 	if p.installments < 1 {
 		return core_err.NewEntityErr("installments must be greater than or equal to 1")
 	}
 
-	if p.taxPercent < 0 {
+	if p.taxPercent <= 0 {
 		return core_err.NewEntityErr("taxPercent must be greater than or equal to 0")
 	}
 
-	if p.totalValueInCents < 0 {
-		return core_err.NewEntityErr("totalValueInCents must be greater than or equal to 0")
-	}
-
-	if p.appliedPoints < 0 {
-		return core_err.NewEntityErr("appliedPoints must be greater than or equal to 0")
+	if p.totalValuePoints <= 0 {
+		return core_err.NewEntityErr("totalValuePoints must be greater than 0")
 	}
 
 	return nil
 }
 
-func (p *Payment) CalculatePartialValue() error {
-	totalValueWithTax := p.totalValueInCents + (p.totalValueInCents * p.taxPercent / 100)
-
-	var appliedPointsInCents int
-	hasAppliedPoints := p.appliedPoints > 0
-	if hasAppliedPoints {
-		appliedPointsInCents = p.appliedPoints * PAYMENT_POINTS_TO_CURRENCY_CENTS
-
-		if appliedPointsInCents > totalValueWithTax {
-			return core_err.NewEntityErr("appliedPoints cannot be greater than totalValueInCents")
-		}
-
-		if appliedPointsInCents == totalValueWithTax {
-			p.partialValueInCents = 0
-			p.method = PAYMENT_METHOD_POINTS
-			return nil
-		}
-	}
-
-	totalValueWithTax -= appliedPointsInCents
-
-	p.partialValueInCents = totalValueWithTax / p.installments
-
-	return nil
-}
-
-func (p *Payment) isPaymentMethodValid() bool {
-	methods := map[string]bool{
-		PAYMENT_METHOD_CREDIT_CARD: true,
-		PAYMENT_METHOD_CASH:        true,
-		PAYMENT_METHOD_PIX:         true,
-		PAYMENT_METHOD_POINTS:      true,
-	}
-
-	return methods[p.method]
+func (p *Payment) CalculatePartialValue() {
+	totalValueWithTax := p.totalValuePoints + (p.totalValuePoints * p.taxPercent / 100)
+	p.partialValuePoints = totalValueWithTax / p.installments
 }
 
 type Payment struct {
 	core.BaseEntity
 
-	method              string
-	installments        int
-	taxPercent          int
-	partialValueInCents int
-	totalValueInCents   int
-	appliedPoints       int
-	status              string
-	transaction         *Transaction
+	installments       int
+	taxPercent         int
+	partialValuePoints int
+	totalValuePoints   int
+	status             string
+	transaction        *Transaction
 }
