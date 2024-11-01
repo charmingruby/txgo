@@ -10,7 +10,7 @@ type environment struct {
 	DatabasePassword string `env:"DATABASE_PASSWORD,required"`
 	DatabaseHost     string `env:"DATABASE_HOST,required"`
 	DatabaseName     string `env:"DATABASE_NAME,required"`
-	DatabaseSSL      string `env:"DATABASE_SSL,required"`
+	DatabasePort     string `env:"DATABASE_PORT,required"`
 }
 
 func New() (Config, error) {
@@ -23,12 +23,12 @@ func New() (Config, error) {
 		ServerConfig: serverConfig{
 			Port: environment.ServerPort,
 		},
-		PostgresConfig: postgresConfig{
+		MySQLConfig: mysqlConfig{
 			User:         environment.DatabaseUser,
 			Password:     environment.DatabasePassword,
 			Host:         environment.DatabaseHost,
 			DatabaseName: environment.DatabaseName,
-			SSL:          environment.DatabaseSSL,
+			Port:         environment.DatabasePort,
 		},
 	}
 
@@ -36,8 +36,8 @@ func New() (Config, error) {
 }
 
 type Config struct {
-	ServerConfig   serverConfig
-	PostgresConfig postgresConfig
+	ServerConfig serverConfig
+	MySQLConfig  mysqlConfig
 }
 
 type serverConfig struct {
@@ -45,10 +45,10 @@ type serverConfig struct {
 	Port string
 }
 
-type postgresConfig struct {
+type mysqlConfig struct {
 	User         string
 	Password     string
 	Host         string
 	DatabaseName string
-	SSL          string
+	Port         string
 }

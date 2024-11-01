@@ -1,7 +1,7 @@
 services:
   database:
     image: mysql:5.7
-    container_name: txgo_db
+    container_name: txgo-db
     restart: always
     environment:
       MYSQL_DATABASE: "db"
