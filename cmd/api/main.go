@@ -17,7 +17,7 @@ func main() {
 		slog.Warn("CONFIGURATION: .env file not found")
 	}
 
-	_, err := config.NewConfig()
+	_, err := config.New()
 	if err != nil {
 		slog.Error(fmt.Sprintf("CONFIGURATION: %v", err))
 		os.Exit(1)

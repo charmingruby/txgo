@@ -13,7 +13,7 @@ type environment struct {
 	DatabaseSSL      string `env:"DATABASE_SSL,required"`
 }
 
-func NewConfig() (Config, error) {
+func New() (Config, error) {
 	environment := environment{}
 	if err := env.Parse(&environment); err != nil {
 		return Config{}, err
