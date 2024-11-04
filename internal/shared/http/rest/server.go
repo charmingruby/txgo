@@ -12,12 +12,15 @@ type RestServer struct {
 	router     *chi.Mux
 }
 
-func NewServer(port string) *RestServer {
-	router := chi.NewRouter()
-
+func NewServer(port string, router *chi.Mux) *RestServer {
 	httpServer := http.Server{
 		Addr: ":" + port,
 	}
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
 
 	return &RestServer{
 		httpServer: &httpServer,
@@ -26,8 +29,6 @@ func NewServer(port string) *RestServer {
 }
 
 func (s *RestServer) Run() error {
-	s.router.Use(middleware.Logger)
-
 	if err := http.ListenAndServe(":3000", s.router); err != nil {
 		return err
 	}

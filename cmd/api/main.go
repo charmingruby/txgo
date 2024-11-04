@@ -6,8 +6,10 @@ import (
 	"os"
 
 	"github.com/charmingruby/txgo/config"
+	"github.com/charmingruby/txgo/internal/giftshop"
 	"github.com/charmingruby/txgo/internal/shared/http/rest"
 	"github.com/charmingruby/txgo/pkg/mysql"
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -37,7 +39,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	restServer := rest.NewServer(config.ServerConfig.Port)
+	router := chi.NewRouter()
+
+	restServer := rest.NewServer(config.ServerConfig.Port, router)
+
+	giftshop.NewHTTPHandler(router)
+
 	slog.Info(fmt.Sprintf("REST SERVER: Running on port %s", config.ServerConfig.Port))
 	if err := restServer.Run(); err != nil {
 		slog.Error(fmt.Sprintf("REST SERVER: %v", err))
