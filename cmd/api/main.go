@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/charmingruby/txgo/config"
+	"github.com/charmingruby/txgo/internal/shared/http/rest"
 	"github.com/charmingruby/txgo/pkg/mysql"
 	"github.com/joho/godotenv"
 )
@@ -33,6 +34,13 @@ func main() {
 	})
 	if err != nil {
 		slog.Error(fmt.Sprintf("MYSQL: %v", err))
+		os.Exit(1)
+	}
+
+	restServer := rest.NewServer(config.ServerConfig.Port)
+	slog.Info(fmt.Sprintf("REST SERVER: Running on port %s", config.ServerConfig.Port))
+	if err := restServer.Run(); err != nil {
+		slog.Error(fmt.Sprintf("REST SERVER: %v", err))
 		os.Exit(1)
 	}
 }
