@@ -15,9 +15,9 @@ func Test_NewWallet(t *testing.T) {
 	t.Run("it should be able to create a wallet with valid params", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:                 dummyName,
-				ownerEmail:           dummyOwnerEmail,
-				initialPointsBalance: dummyPoints,
+				Name:                 dummyName,
+				OwnerEmail:           dummyOwnerEmail,
+				InitialPointsBalance: dummyPoints,
 			},
 		)
 
@@ -31,9 +31,9 @@ func Test_NewWallet(t *testing.T) {
 	t.Run("it should not be able to create a wallet with empty name", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:                 "",
-				ownerEmail:           dummyOwnerEmail,
-				initialPointsBalance: dummyPoints,
+				Name:                 "",
+				OwnerEmail:           dummyOwnerEmail,
+				InitialPointsBalance: dummyPoints,
 			},
 		)
 
@@ -45,9 +45,9 @@ func Test_NewWallet(t *testing.T) {
 	t.Run("it should not be able to create a wallet with empty ownerEmail", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:                 dummyName,
-				ownerEmail:           "",
-				initialPointsBalance: dummyPoints,
+				Name:                 dummyName,
+				OwnerEmail:           "",
+				InitialPointsBalance: dummyPoints,
 			},
 		)
 
@@ -59,9 +59,9 @@ func Test_NewWallet(t *testing.T) {
 	t.Run("it should not be able to create a wallet with negative points", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:                 dummyName,
-				ownerEmail:           dummyOwnerEmail,
-				initialPointsBalance: -10,
+				Name:                 dummyName,
+				OwnerEmail:           dummyOwnerEmail,
+				InitialPointsBalance: -10,
 			},
 		)
 

@@ -6,16 +6,16 @@ import (
 )
 
 type NewWalletInput struct {
-	name                 string
-	ownerEmail           string
-	initialPointsBalance int
+	Name                 string
+	OwnerEmail           string
+	InitialPointsBalance int
 }
 
 func NewWallet(in NewWalletInput) (*Wallet, error) {
 	w := Wallet{
-		name:       in.name,
-		ownerEmail: in.ownerEmail,
-		points:     in.initialPointsBalance,
+		name:       in.Name,
+		ownerEmail: in.OwnerEmail,
+		points:     in.InitialPointsBalance,
 		BaseEntity: core.NewBaseEntity(),
 	}
 
@@ -49,6 +49,10 @@ func (g *Wallet) validate() error {
 	}
 
 	return nil
+}
+
+func (w *Wallet) OwnerEmail() string {
+	return w.ownerEmail
 }
 
 type Wallet struct {
