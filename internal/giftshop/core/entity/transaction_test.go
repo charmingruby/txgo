@@ -18,45 +18,31 @@ func Test_NewTransaction(t *testing.T) {
 
 	t.Run("it should be able to create a transaction with valid params", func(t *testing.T) {
 		input := NewTransactionInput{
-			isInPoints:    false,
-			amountInCents: 1000,
-			buyerWallet:   dummyWallet,
+			AmountInPoints: 100,
+			ReceiverWallet: dummyWallet,
+			BuyerWallet:    dummyWallet,
 		}
 
 		transaction, err := NewTransaction(input)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, transaction)
-		assert.Equal(t, false, transaction.isInPoints)
-		assert.Equal(t, 1000, transaction.amountInCents)
+		assert.Equal(t, 100, transaction.amountInPoints)
+		assert.Equal(t, dummyWallet, transaction.receiverWallet)
 		assert.Equal(t, dummyWallet, transaction.buyerWallet)
 	})
 
-	t.Run("it should not be able to create a transaction with amountInCents less than or equal to 0", func(t *testing.T) {
+	t.Run("it should not be able to create a transaction with amountInPoints less than or equal to 0", func(t *testing.T) {
 		input := NewTransactionInput{
-			isInPoints:    false,
-			amountInCents: 0,
-			buyerWallet:   dummyWallet,
+			AmountInPoints: 0,
+			ReceiverWallet: dummyWallet,
+			BuyerWallet:    dummyWallet,
 		}
 
 		transaction, err := NewTransaction(input)
 
 		assert.Nil(t, transaction)
-		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("amountInCents must be greater than 0").Error(), err.Error())
-	})
-
-	t.Run("it should not be able to create a transaction with nil buyerWallet", func(t *testing.T) {
-		input := NewTransactionInput{
-			isInPoints:    false,
-			amountInCents: 1000,
-			buyerWallet:   nil,
-		}
-
-		transaction, err := NewTransaction(input)
-
-		assert.Nil(t, transaction)
-		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("buyerWallet is required").Error(), err.Error())
+		assert.NotNil(t, err)
+		assert.Equal(t, core_err.NewEntityErr("amountInPoints must be greater than 0").Error(), err.Error())
 	})
 }
