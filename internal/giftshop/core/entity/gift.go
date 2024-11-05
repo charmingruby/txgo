@@ -71,6 +71,18 @@ func (g *Gift) validate() error {
 	return nil
 }
 
+func (g *Gift) SenderEmail() string {
+	return g.senderEmail
+}
+
+func (g *Gift) ReceiverEmail() string {
+	return g.receiverEmail
+}
+
+func (g *Gift) BaseValueInPoints() int {
+	return g.baseValueInPoins
+}
+
 type Gift struct {
 	core.BaseEntity
 
