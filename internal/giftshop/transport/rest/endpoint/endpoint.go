@@ -1,9 +1,13 @@
 package endpoint
 
-import "github.com/go-chi/chi/v5"
+import (
+	"github.com/charmingruby/txgo/internal/giftshop/core/service"
+	"github.com/go-chi/chi/v5"
+)
 
 type Endpoint struct {
-	router *chi.Mux
+	router  *chi.Mux
+	service *service.Service
 }
 
 func New(r *chi.Mux) *Endpoint {
