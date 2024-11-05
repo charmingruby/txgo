@@ -1,5 +1,6 @@
 services:
   database:
+    platform: linux/x86_64
     image: mysql:5.7
     container_name: txgo-db
     restart: always
