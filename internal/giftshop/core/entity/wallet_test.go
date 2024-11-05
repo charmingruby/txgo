@@ -10,12 +10,14 @@ import (
 func Test_NewWallet(t *testing.T) {
 	dummyName := "dummy wallet name"
 	dummyOwnerEmail := "owner@email.com"
+	dummyPoints := 1000
 
 	t.Run("it should be able to create a wallet with valid params", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:       dummyName,
-				ownerEmail: dummyOwnerEmail,
+				name:                 dummyName,
+				ownerEmail:           dummyOwnerEmail,
+				initialPointsBalance: dummyPoints,
 			},
 		)
 
@@ -23,14 +25,15 @@ func Test_NewWallet(t *testing.T) {
 		assert.NotNil(t, wallet)
 		assert.Equal(t, dummyName, wallet.name)
 		assert.Equal(t, dummyOwnerEmail, wallet.ownerEmail)
-		assert.Equal(t, 0, wallet.points)
+		assert.Equal(t, dummyPoints, wallet.points)
 	})
 
 	t.Run("it should not be able to create a wallet with empty name", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:       "",
-				ownerEmail: dummyOwnerEmail,
+				name:                 "",
+				ownerEmail:           dummyOwnerEmail,
+				initialPointsBalance: dummyPoints,
 			},
 		)
 
@@ -42,13 +45,28 @@ func Test_NewWallet(t *testing.T) {
 	t.Run("it should not be able to create a wallet with empty ownerEmail", func(t *testing.T) {
 		wallet, err := NewWallet(
 			NewWalletInput{
-				name:       dummyName,
-				ownerEmail: "",
+				name:                 dummyName,
+				ownerEmail:           "",
+				initialPointsBalance: dummyPoints,
 			},
 		)
 
 		assert.Nil(t, wallet)
 		assert.Error(t, err)
 		assert.Equal(t, core_err.NewEntityErr("ownerEmail is required").Error(), err.Error())
+	})
+
+	t.Run("it should not be able to create a wallet with negative points", func(t *testing.T) {
+		wallet, err := NewWallet(
+			NewWalletInput{
+				name:                 dummyName,
+				ownerEmail:           dummyOwnerEmail,
+				initialPointsBalance: -10,
+			},
+		)
+
+		assert.Nil(t, wallet)
+		assert.Error(t, err)
+		assert.Equal(t, core_err.NewEntityErr("points must be greater than or equal to 0").Error(), err.Error())
 	})
 }
