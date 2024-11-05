@@ -12,17 +12,17 @@ const (
 )
 
 type NewPaymentInput struct {
-	installments     int
-	taxPercent       int
-	totalValuePoints int
+	Installments     int
+	TaxPercent       int
+	TotalValuePoints int
 }
 
 func NewPayment(in NewPaymentInput) (*Payment, error) {
 	g := Payment{
-		installments:       in.installments,
-		taxPercent:         in.taxPercent,
+		installments:       in.Installments,
+		taxPercent:         in.TaxPercent,
 		partialValuePoints: 0,
-		totalValuePoints:   in.totalValuePoints,
+		totalValuePoints:   in.TotalValuePoints,
 		status:             PAYMENT_STATUS_PENDING,
 		transaction:        nil,
 		BaseEntity:         core.NewBaseEntity(),
