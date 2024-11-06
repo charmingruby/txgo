@@ -22,15 +22,15 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 		return core_err.NewResourceNotFoundErr("receiver wallet")
 	}
 
-	buyerWallet, err := s.walletRepo.FindByOwnerEmail(gift.SenderEmail())
+	senderWallet, err := s.walletRepo.FindByOwnerEmail(gift.SenderEmail())
 	if err != nil {
 		return core_err.NewResourceNotFoundErr("sender wallet")
 	}
 
 	newPaymentInput := entity.NewPaymentInput{
-		Installments:     params.Installments,
-		TaxPercent:       params.TaxPercent,
-		TotalValuePoints: gift.BaseValueInPoints(),
+		Installments: params.Installments,
+		TaxPercent:   params.TaxPercent,
+		TotalValue:   gift.BaseValue(),
 	}
 
 	payment, err := entity.NewPayment(newPaymentInput)
@@ -45,9 +45,9 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 	}
 
 	transactionInput := entity.NewTransactionInput{
-		AmountInPoints: gift.BaseValueInPoints(),
+		Points:         gift.BaseValue(),
 		ReceiverWallet: receiverWallet,
-		BuyerWallet:    buyerWallet,
+		SenderWallet:   senderWallet,
 	}
 
 	transaction, err := entity.NewTransaction(transactionInput)

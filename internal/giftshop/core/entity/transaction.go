@@ -6,16 +6,16 @@ import (
 )
 
 type NewTransactionInput struct {
-	AmountInPoints int
+	Points         int
 	ReceiverWallet *Wallet
-	BuyerWallet    *Wallet
+	SenderWallet   *Wallet
 }
 
 func NewTransaction(in NewTransactionInput) (*Transaction, error) {
 	t := Transaction{
-		amountInPoints: in.AmountInPoints,
+		points:         in.Points,
 		receiverWallet: in.ReceiverWallet,
-		buyerWallet:    in.BuyerWallet,
+		senderWallet:   in.SenderWallet,
 		BaseEntity:     core.NewBaseEntity(),
 	}
 
@@ -27,8 +27,8 @@ func NewTransaction(in NewTransactionInput) (*Transaction, error) {
 }
 
 func (t *Transaction) validate() error {
-	if t.amountInPoints <= 0 {
-		return core_err.NewEntityErr("amountInPoints must be greater than 0")
+	if t.points <= 0 {
+		return core_err.NewEntityErr("points must be greater than 0")
 	}
 
 	return nil
@@ -37,7 +37,7 @@ func (t *Transaction) validate() error {
 type Transaction struct {
 	core.BaseEntity
 
-	amountInPoints int
+	points         int
 	receiverWallet *Wallet
-	buyerWallet    *Wallet
+	senderWallet   *Wallet
 }

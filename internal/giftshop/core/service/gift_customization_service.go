@@ -10,7 +10,7 @@ type GiftCustomizationParams struct {
 	Message       string
 	SenderEmail   string
 	ReceiverEmail string
-	ValueInPoints int
+	Value         int
 }
 
 func (s *Service) GiftCustomizationService(params GiftCustomizationParams) error {
@@ -25,11 +25,11 @@ func (s *Service) GiftCustomizationService(params GiftCustomizationParams) error
 	}
 
 	newGiftInput := entity.NewGiftInput{
-		Name:              params.Name,
-		Message:           params.Message,
-		SenderEmail:       senderWallet.OwnerEmail(),
-		ReceiverEmail:     receiverWallet.OwnerEmail(),
-		BaseValueInPoints: params.ValueInPoints,
+		Name:          params.Name,
+		Message:       params.Message,
+		SenderEmail:   senderWallet.OwnerEmail(),
+		ReceiverEmail: receiverWallet.OwnerEmail(),
+		BaseValue:     params.Value,
 	}
 
 	newGift, err := entity.NewGift(newGiftInput)

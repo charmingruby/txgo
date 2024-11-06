@@ -12,16 +12,16 @@ func Test_NewGift(t *testing.T) {
 	dummyMessage := "dummy gift message"
 	dummyReceiverEmail := "receiver@email.com"
 	dummySenderEmail := "sender@email.com"
-	dummyBaseValueInPoints := 100
+	dummyBaseValue := 100
 
 	t.Run("it should be able to create a gift with valid params", func(t *testing.T) {
 		gift, err := NewGift(
 			NewGiftInput{
-				Name:              dummyName,
-				Message:           dummyMessage,
-				SenderEmail:       dummySenderEmail,
-				ReceiverEmail:     dummyReceiverEmail,
-				BaseValueInPoints: dummyBaseValueInPoints,
+				Name:          dummyName,
+				Message:       dummyMessage,
+				SenderEmail:   dummySenderEmail,
+				ReceiverEmail: dummyReceiverEmail,
+				BaseValue:     dummyBaseValue,
 			},
 		)
 
@@ -36,11 +36,11 @@ func Test_NewGift(t *testing.T) {
 	t.Run("it should be not able to create a gift with empty name", func(t *testing.T) {
 		gift, err := NewGift(
 			NewGiftInput{
-				Name:              "",
-				Message:           dummyMessage,
-				SenderEmail:       dummySenderEmail,
-				ReceiverEmail:     dummyReceiverEmail,
-				BaseValueInPoints: dummyBaseValueInPoints,
+				Name:          "",
+				Message:       dummyMessage,
+				SenderEmail:   dummySenderEmail,
+				ReceiverEmail: dummyReceiverEmail,
+				BaseValue:     dummyBaseValue,
 			},
 		)
 
@@ -52,11 +52,11 @@ func Test_NewGift(t *testing.T) {
 	t.Run("it should be not able to create a gift with empty senderEmail", func(t *testing.T) {
 		gift, err := NewGift(
 			NewGiftInput{
-				Name:              dummyName,
-				Message:           dummyMessage,
-				SenderEmail:       "",
-				ReceiverEmail:     dummyReceiverEmail,
-				BaseValueInPoints: dummyBaseValueInPoints,
+				Name:          dummyName,
+				Message:       dummyMessage,
+				SenderEmail:   "",
+				ReceiverEmail: dummyReceiverEmail,
+				BaseValue:     dummyBaseValue,
 			},
 		)
 
@@ -68,11 +68,11 @@ func Test_NewGift(t *testing.T) {
 	t.Run("it should be not able to create a gift with empty receiverEmail", func(t *testing.T) {
 		gift, err := NewGift(
 			NewGiftInput{
-				Name:              dummyName,
-				Message:           dummyMessage,
-				SenderEmail:       dummySenderEmail,
-				ReceiverEmail:     "",
-				BaseValueInPoints: dummyBaseValueInPoints,
+				Name:          dummyName,
+				Message:       dummyMessage,
+				SenderEmail:   dummySenderEmail,
+				ReceiverEmail: "",
+				BaseValue:     dummyBaseValue,
 			},
 		)
 
@@ -84,11 +84,11 @@ func Test_NewGift(t *testing.T) {
 	t.Run("it should be not able to create a gift with basePointsInValue less than 0", func(t *testing.T) {
 		gift, err := NewGift(
 			NewGiftInput{
-				Name:              dummyName,
-				Message:           dummyMessage,
-				SenderEmail:       dummySenderEmail,
-				ReceiverEmail:     dummyReceiverEmail,
-				BaseValueInPoints: -1,
+				Name:          dummyName,
+				Message:       dummyMessage,
+				SenderEmail:   dummySenderEmail,
+				ReceiverEmail: dummyReceiverEmail,
+				BaseValue:     -1,
 			},
 		)
 

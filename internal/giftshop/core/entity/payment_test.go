@@ -10,9 +10,9 @@ import (
 func Test_NewPayment(t *testing.T) {
 	t.Run("it should be able create a payment with valid input", func(t *testing.T) {
 		input := NewPaymentInput{
-			Installments:     3,
-			TaxPercent:       10,
-			TotalValuePoints: 10000,
+			Installments: 3,
+			TaxPercent:   10,
+			TotalValue:   10000,
 		}
 
 		payment, err := NewPayment(input)
@@ -21,15 +21,15 @@ func Test_NewPayment(t *testing.T) {
 		assert.NotNil(t, payment)
 		assert.Equal(t, 3, payment.installments)
 		assert.Equal(t, 10, payment.taxPercent)
-		assert.Equal(t, 10000, payment.totalValuePoints)
+		assert.Equal(t, 10000, payment.totalValue)
 		assert.Equal(t, PAYMENT_STATUS_PENDING, payment.status)
 	})
 
 	t.Run("it should be not able create a payment with installments value less than 1", func(t *testing.T) {
 		input := NewPaymentInput{
-			Installments:     0,
-			TaxPercent:       10,
-			TotalValuePoints: 10000,
+			Installments: 0,
+			TaxPercent:   10,
+			TotalValue:   10000,
 		}
 
 		payment, err := NewPayment(input)
@@ -41,9 +41,9 @@ func Test_NewPayment(t *testing.T) {
 
 	t.Run("it should be not able create a payment with tax percent value less than 0", func(t *testing.T) {
 		input := NewPaymentInput{
-			Installments:     1,
-			TaxPercent:       -10,
-			TotalValuePoints: 10000,
+			Installments: 1,
+			TaxPercent:   -10,
+			TotalValue:   10000,
 		}
 
 		payment, err := NewPayment(input)
@@ -55,31 +55,31 @@ func Test_NewPayment(t *testing.T) {
 
 	t.Run("it should be not able create a payment with total value points less than 0", func(t *testing.T) {
 		input := NewPaymentInput{
-			Installments:     1,
-			TaxPercent:       10,
-			TotalValuePoints: 0,
+			Installments: 1,
+			TaxPercent:   10,
+			TotalValue:   0,
 		}
 
 		payment, err := NewPayment(input)
 
 		assert.Nil(t, payment)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("totalValuePoints must be greater than 0").Error())
+		assert.Equal(t, err.Error(), core_err.NewEntityErr("totalValue must be greater than 0").Error())
 	})
 }
 
 func Test_Payment_CalculatePartialValue(t *testing.T) {
 	t.Run("it should be able to calculate partial value correctly with valid input", func(t *testing.T) {
 		payment := &Payment{
-			installments:     2,
-			taxPercent:       10,
-			totalValuePoints: 10000,
+			installments: 2,
+			taxPercent:   10,
+			totalValue:   10000,
 		}
 
-		expectedPartialValueInCents := (payment.totalValuePoints + (payment.totalValuePoints*payment.taxPercent)/100) / payment.installments
+		expectedPartialValueInCents := (payment.totalValue + (payment.totalValue*payment.taxPercent)/100) / payment.installments
 
 		payment.CalculatePartialValue()
 
-		assert.Equal(t, expectedPartialValueInCents, payment.partialValuePoints)
+		assert.Equal(t, expectedPartialValueInCents, payment.partialValue)
 	})
 }

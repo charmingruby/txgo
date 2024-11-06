@@ -12,23 +12,23 @@ const (
 )
 
 type NewGiftInput struct {
-	Name              string
-	Message           string
-	BaseValueInPoints int
-	SenderEmail       string
-	ReceiverEmail     string
+	Name          string
+	Message       string
+	BaseValue     int
+	SenderEmail   string
+	ReceiverEmail string
 }
 
 func NewGift(in NewGiftInput) (*Gift, error) {
 	g := Gift{
-		name:             in.Name,
-		message:          in.Message,
-		senderEmail:      in.SenderEmail,
-		receiverEmail:    in.ReceiverEmail,
-		baseValueInPoins: in.BaseValueInPoints,
-		status:           GIFT_STATUS_PENDING,
-		payment:          nil,
-		BaseEntity:       core.NewBaseEntity(),
+		name:          in.Name,
+		message:       in.Message,
+		senderEmail:   in.SenderEmail,
+		receiverEmail: in.ReceiverEmail,
+		baseValue:     in.BaseValue,
+		status:        GIFT_STATUS_PENDING,
+		payment:       nil,
+		BaseEntity:    core.NewBaseEntity(),
 	}
 
 	if err := g.validate(); err != nil {
@@ -40,14 +40,14 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 
 func NewGiftFrom(in Gift) *Gift {
 	return &Gift{
-		name:             in.name,
-		message:          in.message,
-		receiverEmail:    in.receiverEmail,
-		senderEmail:      in.senderEmail,
-		baseValueInPoins: in.baseValueInPoins,
-		status:           in.status,
-		payment:          in.payment,
-		BaseEntity:       in.BaseEntity,
+		name:          in.name,
+		message:       in.message,
+		receiverEmail: in.receiverEmail,
+		senderEmail:   in.senderEmail,
+		baseValue:     in.baseValue,
+		status:        in.status,
+		payment:       in.payment,
+		BaseEntity:    in.BaseEntity,
 	}
 }
 
@@ -64,8 +64,8 @@ func (g *Gift) validate() error {
 		return core_err.NewEntityErr("receiverEmail is required")
 	}
 
-	if g.baseValueInPoins < 0 {
-		return core_err.NewEntityErr("baseValueInPoins should be greater than 0")
+	if g.baseValue < 0 {
+		return core_err.NewEntityErr("baseValue should be greater than 0")
 	}
 
 	return nil
@@ -79,18 +79,18 @@ func (g *Gift) ReceiverEmail() string {
 	return g.receiverEmail
 }
 
-func (g *Gift) BaseValueInPoints() int {
-	return g.baseValueInPoins
+func (g *Gift) BaseValue() int {
+	return g.baseValue
 }
 
 type Gift struct {
 	core.BaseEntity
 
-	name             string
-	message          string
-	receiverEmail    string
-	senderEmail      string
-	baseValueInPoins int
-	status           string
-	payment          *Payment
+	name          string
+	message       string
+	receiverEmail string
+	senderEmail   string
+	baseValue     int
+	status        string
+	payment       *Payment
 }
