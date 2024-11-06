@@ -3,15 +3,20 @@ package endpoint
 import (
 	"github.com/charmingruby/txgo/internal/giftshop/core/service"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
 
 type Endpoint struct {
-	router  *chi.Mux
-	service *service.Service
+	router    *chi.Mux
+	service   *service.Service
+	validator *validator.Validate
 }
 
 func New(r *chi.Mux) *Endpoint {
-	return &Endpoint{router: r}
+	return &Endpoint{
+		router:    r,
+		validator: validator.New(),
+	}
 }
 
 func (e *Endpoint) Register() {
