@@ -10,6 +10,20 @@ func NewBaseEntity() BaseEntity {
 	}
 }
 
+type NewBaseEntityFromInput struct {
+	ID        string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+func NewBaseEntityFrom(input NewBaseEntityFromInput) BaseEntity {
+	return BaseEntity{
+		id:        input.ID,
+		createdAt: input.CreatedAt,
+		updatedAt: input.UpdatedAt,
+	}
+}
+
 func (e *BaseEntity) ID() string {
 	return e.id
 }
