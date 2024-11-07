@@ -58,8 +58,16 @@ func (g *Wallet) validate() error {
 	return nil
 }
 
+func (w *Wallet) Name() string {
+	return w.name
+}
+
 func (w *Wallet) OwnerEmail() string {
 	return w.ownerEmail
+}
+
+func (w *Wallet) Points() int {
+	return w.points
 }
 
 type Wallet struct {

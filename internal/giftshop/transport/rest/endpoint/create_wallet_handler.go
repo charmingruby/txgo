@@ -1,11 +1,12 @@
 package endpoint
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/service"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
+	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 	"github.com/charmingruby/txgo/internal/shared/http/rest"
 )
 
@@ -13,7 +14,7 @@ func (e *Endpoint) createWalletHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req, err := rest.ParseRequest[request.CreateWalletRequest](*e.validator, r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			rest.BadRequestErrorResponse(w, err.Error())
 			return
 		}
 
@@ -23,14 +24,17 @@ func (e *Endpoint) createWalletHandler() http.HandlerFunc {
 			InitialPointsBalance: req.InitialPointsBalance,
 		}
 
-		fmt.Printf("%+v", serviceInput)
+		if err := e.service.CreateWalletService(serviceInput); err != nil {
+			var resourceExistsErr *core_err.ResourceAlreadyExistsErr
+			if errors.As(err, &resourceExistsErr) {
+				rest.ConflictErrorResponse(w, err.Error())
+				return
+			}
 
-		// if err := e.service.CreateWalletService(serviceInput); err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// 	return
-		// }
+			rest.InternalServerErrorResponse(w)
+			return
+		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
+		rest.CreatedResponse(w, "wallet")
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log/slog"
 	"os"
@@ -27,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = mysql.New(mysql.MySQLConnectionInput{
+	db, err := mysql.New(mysql.MySQLConnectionInput{
 		Username:     config.MySQLConfig.User,
 		Password:     config.MySQLConfig.Password,
 		Host:         config.MySQLConfig.Host,
@@ -38,16 +39,25 @@ func main() {
 		slog.Error(fmt.Sprintf("MYSQL: %v", err))
 		os.Exit(1)
 	}
+	defer db.Close()
 
 	router := chi.NewRouter()
 
 	restServer := rest.NewServer(config.ServerConfig.Port, router)
 
-	giftshop.NewHTTPHandler(router)
+	initDependencies(router, db)
 
 	slog.Info(fmt.Sprintf("REST SERVER: Running on port %s", config.ServerConfig.Port))
 	if err := restServer.Run(); err != nil {
 		slog.Error(fmt.Sprintf("REST SERVER: %v", err))
 		os.Exit(1)
 	}
+}
+
+func initDependencies(r *chi.Mux, db *sql.DB) {
+	walletRepository := giftshop.NewWalletRepository(db)
+
+	giftshopSvc := giftshop.NewService(walletRepository)
+
+	giftshop.NewHTTPHandler(r, giftshopSvc)
 }

@@ -12,9 +12,10 @@ type Endpoint struct {
 	validator *validator.Validate
 }
 
-func New(r *chi.Mux) *Endpoint {
+func New(r *chi.Mux, service *service.Service) *Endpoint {
 	return &Endpoint{
 		router:    r,
+		service:   service,
 		validator: validator.New(),
 	}
 }
