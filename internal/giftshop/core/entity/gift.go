@@ -38,19 +38,6 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 	return &g, nil
 }
 
-func NewGiftFrom(in Gift) *Gift {
-	return &Gift{
-		name:          in.name,
-		message:       in.message,
-		receiverEmail: in.receiverEmail,
-		senderEmail:   in.senderEmail,
-		baseValue:     in.baseValue,
-		status:        in.status,
-		payment:       in.payment,
-		BaseEntity:    in.BaseEntity,
-	}
-}
-
 func (g *Gift) validate() error {
 	if g.name == "" {
 		return core_err.NewEntityErr("name is required")

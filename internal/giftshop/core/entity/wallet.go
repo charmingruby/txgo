@@ -26,11 +26,18 @@ func NewWallet(in NewWalletInput) (*Wallet, error) {
 	return &w, nil
 }
 
-func NewWalletFrom(in Wallet) *Wallet {
+type NewWalletFromInput struct {
+	BaseEntity core.BaseEntity
+	Name       string
+	OwnerEmail string
+	Points     int
+}
+
+func NewWalletFrom(in NewWalletFromInput) *Wallet {
 	return &Wallet{
-		name:       in.name,
-		ownerEmail: in.ownerEmail,
-		points:     in.points,
+		name:       in.Name,
+		ownerEmail: in.OwnerEmail,
+		points:     in.Points,
 		BaseEntity: in.BaseEntity,
 	}
 }

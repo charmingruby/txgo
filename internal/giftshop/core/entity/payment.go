@@ -35,18 +35,6 @@ func NewPayment(in NewPaymentInput) (*Payment, error) {
 	return &g, nil
 }
 
-func NewPaymentFrom(in Payment) *Payment {
-	return &Payment{
-		installments: in.installments,
-		taxPercent:   in.taxPercent,
-		partialValue: in.partialValue,
-		totalValue:   in.totalValue,
-		status:       PAYMENT_STATUS_PENDING,
-		transaction:  in.transaction,
-		BaseEntity:   in.BaseEntity,
-	}
-}
-
 func (p *Payment) validate() error {
 	if p.installments < 1 {
 		return core_err.NewEntityErr("installments must be greater than or equal to 1")
