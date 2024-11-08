@@ -67,19 +67,3 @@ func Test_NewPayment(t *testing.T) {
 		assert.Equal(t, err.Error(), core_err.NewEntityErr("totalValue must be greater than 0").Error())
 	})
 }
-
-func Test_Payment_CalculatePartialValue(t *testing.T) {
-	t.Run("it should be able to calculate partial value correctly with valid input", func(t *testing.T) {
-		payment := &Payment{
-			installments: 2,
-			taxPercent:   10,
-			totalValue:   10000,
-		}
-
-		expectedPartialValueInCents := (payment.totalValue + (payment.totalValue*payment.taxPercent)/100) / payment.installments
-
-		payment.CalculatePartialValue()
-
-		assert.Equal(t, expectedPartialValueInCents, payment.partialValue)
-	})
-}

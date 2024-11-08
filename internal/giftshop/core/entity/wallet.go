@@ -1,9 +1,20 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
+
+type Wallet struct {
+	id         string
+	name       string
+	ownerEmail string
+	points     int
+	createdAt  time.Time
+	updatedAt  time.Time
+}
 
 type NewWalletInput struct {
 	Name                 string
@@ -13,10 +24,12 @@ type NewWalletInput struct {
 
 func NewWallet(in NewWalletInput) (*Wallet, error) {
 	w := Wallet{
+		id:         core.NewID(),
 		name:       in.Name,
 		ownerEmail: in.OwnerEmail,
 		points:     in.InitialPointsBalance,
-		BaseEntity: core.NewBaseEntity(),
+		createdAt:  time.Now(),
+		updatedAt:  time.Now(),
 	}
 
 	if err := w.validate(); err != nil {
@@ -27,18 +40,22 @@ func NewWallet(in NewWalletInput) (*Wallet, error) {
 }
 
 type NewWalletFromInput struct {
-	BaseEntity core.BaseEntity
+	ID         string
 	Name       string
 	OwnerEmail string
 	Points     int
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 func NewWalletFrom(in NewWalletFromInput) *Wallet {
 	return &Wallet{
+		id:         in.ID,
 		name:       in.Name,
 		ownerEmail: in.OwnerEmail,
 		points:     in.Points,
-		BaseEntity: in.BaseEntity,
+		createdAt:  in.CreatedAt,
+		updatedAt:  in.UpdatedAt,
 	}
 }
 
@@ -58,6 +75,10 @@ func (g *Wallet) validate() error {
 	return nil
 }
 
+func (w *Wallet) ID() string {
+	return w.id
+}
+
 func (w *Wallet) Name() string {
 	return w.name
 }
@@ -70,10 +91,10 @@ func (w *Wallet) Points() int {
 	return w.points
 }
 
-type Wallet struct {
-	core.BaseEntity
+func (w *Wallet) CreatedAt() time.Time {
+	return w.createdAt
+}
 
-	name       string
-	ownerEmail string
-	points     int
+func (w *Wallet) UpdatedAt() time.Time {
+	return w.updatedAt
 }

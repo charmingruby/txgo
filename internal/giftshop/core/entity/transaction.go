@@ -1,9 +1,20 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
+
+type Transaction struct {
+	id             string
+	points         int
+	receiverWallet *Wallet
+	senderWallet   *Wallet
+	createdAt      time.Time
+	updatedAt      time.Time
+}
 
 type NewTransactionInput struct {
 	Points         int
@@ -13,10 +24,12 @@ type NewTransactionInput struct {
 
 func NewTransaction(in NewTransactionInput) (*Transaction, error) {
 	t := Transaction{
+		id:             core.NewID(),
 		points:         in.Points,
 		receiverWallet: in.ReceiverWallet,
 		senderWallet:   in.SenderWallet,
-		BaseEntity:     core.NewBaseEntity(),
+		createdAt:      time.Now(),
+		updatedAt:      time.Now(),
 	}
 
 	if err := t.validate(); err != nil {
@@ -32,12 +45,4 @@ func (t *Transaction) validate() error {
 	}
 
 	return nil
-}
-
-type Transaction struct {
-	core.BaseEntity
-
-	points         int
-	receiverWallet *Wallet
-	senderWallet   *Wallet
 }

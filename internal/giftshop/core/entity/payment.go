@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
@@ -19,13 +21,15 @@ type NewPaymentInput struct {
 
 func NewPayment(in NewPaymentInput) (*Payment, error) {
 	g := Payment{
+		id:           core.NewID(),
 		installments: in.Installments,
 		taxPercent:   in.TaxPercent,
 		partialValue: 0,
 		totalValue:   in.TotalValue,
 		status:       PAYMENT_STATUS_PENDING,
 		transaction:  nil,
-		BaseEntity:   core.NewBaseEntity(),
+		createdAt:    time.Now(),
+		updatedAt:    time.Now(),
 	}
 
 	if err := g.validate(); err != nil {
@@ -51,18 +55,14 @@ func (p *Payment) validate() error {
 	return nil
 }
 
-func (p *Payment) CalculatePartialValue() {
-	totalValueWithTax := p.totalValue + (p.totalValue * p.taxPercent / 100)
-	p.partialValue = totalValueWithTax / p.installments
-}
-
 type Payment struct {
-	core.BaseEntity
-
+	id           string
 	installments int
 	taxPercent   int
 	partialValue int
 	totalValue   int
 	status       string
 	transaction  *Transaction
+	createdAt    time.Time
+	updatedAt    time.Time
 }

@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
@@ -10,10 +11,12 @@ import (
 
 func Test_NewTransaction(t *testing.T) {
 	dummyWallet := &Wallet{
+		id:         core.NewID(),
 		name:       "dummy wallet",
 		ownerEmail: "owner@email.com",
 		points:     1000,
-		BaseEntity: core.NewBaseEntity(),
+		createdAt:  time.Now(),
+		updatedAt:  time.Now(),
 	}
 
 	t.Run("it should be able to create a transaction with valid params", func(t *testing.T) {

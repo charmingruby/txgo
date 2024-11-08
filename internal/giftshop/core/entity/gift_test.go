@@ -81,7 +81,7 @@ func Test_NewGift(t *testing.T) {
 		assert.Equal(t, err.Error(), core_err.NewEntityErr("receiverEmail is required").Error())
 	})
 
-	t.Run("it should be not able to create a gift with basePointsInValue less than 0", func(t *testing.T) {
+	t.Run("it should be not able to create a gift with base value less than 0", func(t *testing.T) {
 		gift, err := NewGift(
 			NewGiftInput{
 				Name:          dummyName,
@@ -94,6 +94,6 @@ func Test_NewGift(t *testing.T) {
 
 		assert.Nil(t, gift)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("baseValueInPoins should be greater than 0").Error())
+		assert.Equal(t, err.Error(), core_err.NewEntityErr("baseValue should be greater than 0").Error())
 	})
 }

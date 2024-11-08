@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/entity"
-	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
 
@@ -69,11 +68,9 @@ func (r *WalletRepository) Store(wallet *entity.Wallet) error {
 
 func (r *WalletRepository) mapToDomain(wallet walletRow) *entity.Wallet {
 	input := entity.NewWalletFromInput{
-		BaseEntity: core.NewBaseEntityFrom(core.NewBaseEntityFromInput{
-			ID:        wallet.ID,
-			CreatedAt: wallet.CreatedAt,
-			UpdatedAt: wallet.UpdatedAt,
-		}),
+		ID:         wallet.ID,
+		CreatedAt:  wallet.CreatedAt,
+		UpdatedAt:  wallet.UpdatedAt,
 		Name:       wallet.Name,
 		OwnerEmail: wallet.OwnerEmail,
 		Points:     wallet.Points,
