@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"testing"
@@ -42,7 +42,7 @@ func Test_NewAudit(t *testing.T) {
 
 		assert.Nil(t, audit)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("actors are required").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("actors are required").Error(), err.Error())
 	})
 
 	t.Run("it should not be able to create a payment movimentation audit with empty context", func(t *testing.T) {
@@ -58,7 +58,7 @@ func Test_NewAudit(t *testing.T) {
 
 		assert.Nil(t, audit)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("context is required").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("context is required").Error(), err.Error())
 	})
 
 	t.Run("it should not be able to create a payment movimentation audit with empty description", func(t *testing.T) {
@@ -74,6 +74,6 @@ func Test_NewAudit(t *testing.T) {
 
 		assert.Nil(t, audit)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("description is required").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("description is required").Error(), err.Error())
 	})
 }

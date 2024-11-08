@@ -1,8 +1,8 @@
 package repository
 
-import "github.com/charmingruby/txgo/internal/giftshop/core/entity"
+import "github.com/charmingruby/txgo/internal/giftshop/core/model"
 
 type WalletRepository interface {
-	FindByOwnerEmail(ownerEmail string) (*entity.Wallet, error)
-	Store(Wallet *entity.Wallet) error
+	FindByOwnerEmail(ownerEmail string) (*model.Wallet, error)
+	Store(Wallet *model.Wallet) error
 }

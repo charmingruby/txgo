@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"time"
@@ -41,7 +41,7 @@ func NewTransaction(in NewTransactionInput) (*Transaction, error) {
 
 func (t *Transaction) validate() error {
 	if t.points <= 0 {
-		return core_err.NewEntityErr("points must be greater than 0")
+		return core_err.NewModelErr("points must be greater than 0")
 	}
 
 	return nil

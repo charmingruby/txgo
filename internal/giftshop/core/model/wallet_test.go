@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"testing"
@@ -39,7 +39,7 @@ func Test_NewWallet(t *testing.T) {
 
 		assert.Nil(t, wallet)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("name is required").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("name is required").Error(), err.Error())
 	})
 
 	t.Run("it should not be able to create a wallet with empty ownerEmail", func(t *testing.T) {
@@ -53,7 +53,7 @@ func Test_NewWallet(t *testing.T) {
 
 		assert.Nil(t, wallet)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("ownerEmail is required").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("ownerEmail is required").Error(), err.Error())
 	})
 
 	t.Run("it should not be able to create a wallet with negative points", func(t *testing.T) {
@@ -67,6 +67,6 @@ func Test_NewWallet(t *testing.T) {
 
 		assert.Nil(t, wallet)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewEntityErr("points must be greater than or equal to 0").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("points must be greater than or equal to 0").Error(), err.Error())
 	})
 }

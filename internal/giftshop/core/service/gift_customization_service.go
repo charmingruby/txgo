@@ -19,7 +19,7 @@ package service
 // 		return core_err.NewResourceNotFoundErr("gift receiver")
 // 	}
 
-// 	newGiftInput := entity.NewGiftInput{
+// 	newGiftInput := model.NewGiftInput{
 // 		Name:          params.Name,
 // 		Message:       params.Message,
 // 		SenderEmail:   senderWallet.OwnerEmail(),
@@ -27,7 +27,7 @@ package service
 // 		BaseValue:     params.Value,
 // 	}
 
-// 	newGift, err := entity.NewGift(newGiftInput)
+// 	newGift, err := model.NewGift(newGiftInput)
 // 	if err != nil {
 // 		return err
 // 	}

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/charmingruby/txgo/internal/giftshop/core/entity"
+	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
 
@@ -21,13 +21,13 @@ func (s *Service) CreateWalletService(params CreateWalletInput) error {
 		return core_err.NewResourceAlreadyExistsErr("wallet")
 	}
 
-	input := entity.NewWalletInput{
+	input := model.NewWalletInput{
 		Name:                 params.WalletName,
 		OwnerEmail:           params.OwnerEmail,
 		InitialPointsBalance: params.InitialPointsBalance,
 	}
 
-	newWallet, err := entity.NewWallet(input)
+	newWallet, err := model.NewWallet(input)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"time"
@@ -41,15 +41,15 @@ func NewPayment(in NewPaymentInput) (*Payment, error) {
 
 func (p *Payment) validate() error {
 	if p.installments < 1 {
-		return core_err.NewEntityErr("installments must be greater than or equal to 1")
+		return core_err.NewModelErr("installments must be greater than or equal to 1")
 	}
 
 	if p.taxPercent <= 0 {
-		return core_err.NewEntityErr("taxPercent must be greater than or equal to 0")
+		return core_err.NewModelErr("taxPercent must be greater than or equal to 0")
 	}
 
 	if p.totalValue <= 0 {
-		return core_err.NewEntityErr("totalValue must be greater than 0")
+		return core_err.NewModelErr("totalValue must be greater than 0")
 	}
 
 	return nil

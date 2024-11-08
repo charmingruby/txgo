@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/charmingruby/txgo/internal/giftshop/core/entity"
+	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
 
@@ -30,7 +30,7 @@ type walletRow struct {
 	UpdatedAt  time.Time
 }
 
-func (r *WalletRepository) FindByOwnerEmail(ownerEmail string) (*entity.Wallet, error) {
+func (r *WalletRepository) FindByOwnerEmail(ownerEmail string) (*model.Wallet, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE owner_email = ?", WALLETS_TABLE)
 
 	queryResult := r.db.QueryRow(query, ownerEmail)
@@ -55,7 +55,7 @@ func (r *WalletRepository) FindByOwnerEmail(ownerEmail string) (*entity.Wallet, 
 	return r.mapToDomain(row), nil
 }
 
-func (r *WalletRepository) Store(wallet *entity.Wallet) error {
+func (r *WalletRepository) Store(wallet *model.Wallet) error {
 	query := fmt.Sprintf("INSERT INTO %s (id, name, owner_email, points, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", WALLETS_TABLE)
 
 	_, err := r.db.Exec(query, wallet.ID(), wallet.Name(), wallet.OwnerEmail(), wallet.Points(), wallet.CreatedAt(), wallet.UpdatedAt())
@@ -66,8 +66,8 @@ func (r *WalletRepository) Store(wallet *entity.Wallet) error {
 	return nil
 }
 
-func (r *WalletRepository) mapToDomain(wallet walletRow) *entity.Wallet {
-	input := entity.NewWalletFromInput{
+func (r *WalletRepository) mapToDomain(wallet walletRow) *model.Wallet {
+	input := model.NewWalletFromInput{
 		ID:         wallet.ID,
 		CreatedAt:  wallet.CreatedAt,
 		UpdatedAt:  wallet.UpdatedAt,
@@ -76,5 +76,5 @@ func (r *WalletRepository) mapToDomain(wallet walletRow) *entity.Wallet {
 		Points:     wallet.Points,
 	}
 
-	return entity.NewWalletFrom(input)
+	return model.NewWalletFrom(input)
 }

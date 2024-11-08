@@ -1,7 +1,7 @@
 package repository
 
-import "github.com/charmingruby/txgo/internal/giftshop/core/entity"
+import "github.com/charmingruby/txgo/internal/giftshop/core/model"
 
 type PaymentRepository interface {
-	Store(payment *entity.Payment) error
+	Store(payment *model.Payment) error
 }

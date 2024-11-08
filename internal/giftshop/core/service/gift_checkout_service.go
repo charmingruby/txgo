@@ -22,13 +22,13 @@ package service
 // 		return core_err.NewResourceNotFoundErr("sender wallet")
 // 	}
 
-// 	newPaymentInput := entity.NewPaymentInput{
+// 	newPaymentInput := model.NewPaymentInput{
 // 		Installments: params.Installments,
 // 		TaxPercent:   params.TaxPercent,
 // 		TotalValue:   gift.BaseValue(),
 // 	}
 
-// 	payment, err := entity.NewPayment(newPaymentInput)
+// 	payment, err := model.NewPayment(newPaymentInput)
 // 	if err != nil {
 // 		return err
 // 	}
@@ -39,13 +39,13 @@ package service
 // 		return err
 // 	}
 
-// 	transactionInput := entity.NewTransactionInput{
+// 	transactionInput := model.NewTransactionInput{
 // 		Points:         gift.BaseValue(),
 // 		ReceiverWallet: receiverWallet,
 // 		SenderWallet:   senderWallet,
 // 	}
 
-// 	transaction, err := entity.NewTransaction(transactionInput)
+// 	transaction, err := model.NewTransaction(transactionInput)
 // 	if err != nil {
 // 		return err
 // 	}

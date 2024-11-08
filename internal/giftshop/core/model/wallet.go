@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"time"
@@ -61,15 +61,15 @@ func NewWalletFrom(in NewWalletFromInput) *Wallet {
 
 func (g *Wallet) validate() error {
 	if g.name == "" {
-		return core_err.NewEntityErr("name is required")
+		return core_err.NewModelErr("name is required")
 	}
 
 	if g.ownerEmail == "" {
-		return core_err.NewEntityErr("ownerEmail is required")
+		return core_err.NewModelErr("ownerEmail is required")
 	}
 
 	if g.points < 0 {
-		return core_err.NewEntityErr("points must be greater than or equal to 0")
+		return core_err.NewModelErr("points must be greater than or equal to 0")
 	}
 
 	return nil

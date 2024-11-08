@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"testing"
@@ -46,6 +46,6 @@ func Test_NewTransaction(t *testing.T) {
 
 		assert.Nil(t, transaction)
 		assert.NotNil(t, err)
-		assert.Equal(t, core_err.NewEntityErr("points must be greater than 0").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("points must be greater than 0").Error(), err.Error())
 	})
 }

@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"time"
@@ -44,19 +44,19 @@ func NewGift(in NewGiftInput) (*Gift, error) {
 
 func (g *Gift) validate() error {
 	if g.name == "" {
-		return core_err.NewEntityErr("name is required")
+		return core_err.NewModelErr("name is required")
 	}
 
 	if g.senderEmail == "" {
-		return core_err.NewEntityErr("senderEmail is required")
+		return core_err.NewModelErr("senderEmail is required")
 	}
 
 	if g.receiverEmail == "" {
-		return core_err.NewEntityErr("receiverEmail is required")
+		return core_err.NewModelErr("receiverEmail is required")
 	}
 
 	if g.baseValue < 0 {
-		return core_err.NewEntityErr("baseValue should be greater than 0")
+		return core_err.NewModelErr("baseValue should be greater than 0")
 	}
 
 	return nil

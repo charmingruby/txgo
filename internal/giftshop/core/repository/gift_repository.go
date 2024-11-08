@@ -1,8 +1,8 @@
 package repository
 
-import "github.com/charmingruby/txgo/internal/giftshop/core/entity"
+import "github.com/charmingruby/txgo/internal/giftshop/core/model"
 
 type GiftRepository interface {
-	FindByID(id string) (*entity.Gift, error)
-	Store(gift *entity.Gift) error
+	FindByID(id string) (*model.Gift, error)
+	Store(gift *model.Gift) error
 }

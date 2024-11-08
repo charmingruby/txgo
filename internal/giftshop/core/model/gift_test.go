@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"testing"
@@ -46,7 +46,7 @@ func Test_NewGift(t *testing.T) {
 
 		assert.Nil(t, gift)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("name is required").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("name is required").Error())
 	})
 
 	t.Run("it should be not able to create a gift with empty senderEmail", func(t *testing.T) {
@@ -62,7 +62,7 @@ func Test_NewGift(t *testing.T) {
 
 		assert.Nil(t, gift)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("senderEmail is required").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("senderEmail is required").Error())
 	})
 
 	t.Run("it should be not able to create a gift with empty receiverEmail", func(t *testing.T) {
@@ -78,7 +78,7 @@ func Test_NewGift(t *testing.T) {
 
 		assert.Nil(t, gift)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("receiverEmail is required").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("receiverEmail is required").Error())
 	})
 
 	t.Run("it should be not able to create a gift with base value less than 0", func(t *testing.T) {
@@ -94,6 +94,6 @@ func Test_NewGift(t *testing.T) {
 
 		assert.Nil(t, gift)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("baseValue should be greater than 0").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("baseValue should be greater than 0").Error())
 	})
 }

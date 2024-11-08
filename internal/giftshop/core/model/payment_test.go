@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"testing"
@@ -36,7 +36,7 @@ func Test_NewPayment(t *testing.T) {
 
 		assert.Nil(t, payment)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("installments must be greater than or equal to 1").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("installments must be greater than or equal to 1").Error())
 	})
 
 	t.Run("it should be not able create a payment with tax percent value less than 0", func(t *testing.T) {
@@ -50,7 +50,7 @@ func Test_NewPayment(t *testing.T) {
 
 		assert.Nil(t, payment)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("taxPercent must be greater than or equal to 0").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("taxPercent must be greater than or equal to 0").Error())
 	})
 
 	t.Run("it should be not able create a payment with total value points less than 0", func(t *testing.T) {
@@ -64,6 +64,6 @@ func Test_NewPayment(t *testing.T) {
 
 		assert.Nil(t, payment)
 		assert.Error(t, err)
-		assert.Equal(t, err.Error(), core_err.NewEntityErr("totalValue must be greater than 0").Error())
+		assert.Equal(t, err.Error(), core_err.NewModelErr("totalValue must be greater than 0").Error())
 	})
 }

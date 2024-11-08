@@ -1,9 +1,20 @@
-package entity
+package model
 
 import (
+	"time"
+
 	"github.com/charmingruby/txgo/internal/shared/core"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
+
+type Audit struct {
+	id          string
+	actors      []string
+	context     string
+	description string
+	createdAt   time.Time
+	updatedAt   time.Time
+}
 
 type NewAuditInput struct {
 	actors      []string
@@ -13,10 +24,12 @@ type NewAuditInput struct {
 
 func NewAudit(in NewAuditInput) (*Audit, error) {
 	p := Audit{
+		id:          core.NewID(),
 		actors:      in.actors,
 		context:     in.context,
 		description: in.description,
-		BaseEntity:  core.NewBaseEntity(),
+		createdAt:   time.Now(),
+		updatedAt:   time.Now(),
 	}
 
 	if err := p.validate(); err != nil {
@@ -26,35 +39,18 @@ func NewAudit(in NewAuditInput) (*Audit, error) {
 	return &p, nil
 }
 
-func NewAuditFrom(in Audit) *Audit {
-	return &Audit{
-		actors:      in.actors,
-		context:     in.context,
-		description: in.description,
-		BaseEntity:  in.BaseEntity,
-	}
-}
-
 func (p *Audit) validate() error {
 	if len(p.actors) == 0 {
-		return core_err.NewEntityErr("actors are required")
+		return core_err.NewModelErr("actors are required")
 	}
 
 	if p.context == "" {
-		return core_err.NewEntityErr("context is required")
+		return core_err.NewModelErr("context is required")
 	}
 
 	if p.description == "" {
-		return core_err.NewEntityErr("description is required")
+		return core_err.NewModelErr("description is required")
 	}
 
 	return nil
-}
-
-type Audit struct {
-	core.BaseEntity
-
-	actors      []string
-	context     string
-	description string
 }
