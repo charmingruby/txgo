@@ -2,6 +2,8 @@ package endpoint
 
 import (
 	"errors"
+	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/service"
@@ -31,6 +33,14 @@ func (e *Endpoint) createWalletHandler() http.HandlerFunc {
 				return
 			}
 
+			var storageErr *core_err.PersistenceErr
+			if errors.As(err, &storageErr) {
+				slog.Error(fmt.Sprintf("PERSISTENCE ERROR: %s", storageErr.Error()))
+				rest.InternalServerErrorResponse(w)
+				return
+			}
+
+			slog.Error(fmt.Sprintf("UNEXPECTED ERROR: %s", err.Error()))
 			rest.InternalServerErrorResponse(w)
 			return
 		}

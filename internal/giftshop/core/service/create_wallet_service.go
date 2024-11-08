@@ -12,7 +12,11 @@ type CreateWalletInput struct {
 }
 
 func (s *Service) CreateWalletService(params CreateWalletInput) error {
-	walletFound, _ := s.walletRepo.FindByOwnerEmail(params.OwnerEmail)
+	walletFound, err := s.walletRepo.FindByOwnerEmail(params.OwnerEmail)
+	if err != nil {
+		return err
+	}
+
 	if walletFound != nil {
 		return core_err.NewResourceAlreadyExistsErr("wallet")
 	}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/entity"
 	"github.com/charmingruby/txgo/internal/shared/core"
+	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
 
 const (
@@ -45,7 +46,11 @@ func (r *WalletRepository) FindByOwnerEmail(ownerEmail string) (*entity.Wallet, 
 		&row.CreatedAt,
 		&row.UpdatedAt,
 	); err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, core_err.NewPersistenceErr(err, "mysql")
 	}
 
 	return r.mapToDomain(row), nil
@@ -55,8 +60,11 @@ func (r *WalletRepository) Store(wallet *entity.Wallet) error {
 	query := fmt.Sprintf("INSERT INTO %s (id, name, owner_email, points, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", WALLETS_TABLE)
 
 	_, err := r.db.Exec(query, wallet.ID(), wallet.Name(), wallet.OwnerEmail(), wallet.Points(), wallet.CreatedAt(), wallet.UpdatedAt())
+	if err != nil {
+		return core_err.NewPersistenceErr(err, "mysql")
+	}
 
-	return err
+	return nil
 }
 
 func (r *WalletRepository) mapToDomain(wallet walletRow) *entity.Wallet {
