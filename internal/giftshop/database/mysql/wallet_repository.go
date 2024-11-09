@@ -49,7 +49,7 @@ func (r *WalletRepository) FindByOwnerEmail(ownerEmail string) (*model.Wallet, e
 			return nil, nil
 		}
 
-		return nil, core_err.NewPersistenceErr(err, "mysql")
+		return nil, core_err.NewPersistenceErr(err, "wallet find_by_owner_email", "mysql")
 	}
 
 	return r.mapToDomain(row), nil
@@ -60,7 +60,7 @@ func (r *WalletRepository) Store(wallet *model.Wallet) error {
 
 	_, err := r.db.Exec(query, wallet.ID(), wallet.Name(), wallet.OwnerEmail(), wallet.Points(), wallet.CreatedAt(), wallet.UpdatedAt())
 	if err != nil {
-		return core_err.NewPersistenceErr(err, "mysql")
+		return core_err.NewPersistenceErr(err, "wallet store", "mysql")
 	}
 
 	return nil

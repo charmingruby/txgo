@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS gifts (
     status VARCHAR(255) NOT NULL,
     receiver_wallet_id VARCHAR(255) NOT NULL,
     sender_wallet_id VARCHAR(255) NOT NULL,
-    payment_id VARCHAR(255) NOT NULL,
+    payment_id VARCHAR(255) NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

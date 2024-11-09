@@ -12,12 +12,17 @@ import (
 
 func NewService(
 	walletRepository repository.WalletRepository,
+	giftRepository repository.GiftRepository,
 ) *service.Service {
-	return service.NewService(walletRepository)
+	return service.NewService(giftRepository, walletRepository)
 }
 
 func NewWalletRepository(db *sql.DB) repository.WalletRepository {
 	return mysql.NewWalletRepository(db)
+}
+
+func NewGiftRepository(db *sql.DB) repository.GiftRepository {
+	return mysql.NewGiftRepository(db)
 }
 
 func NewHTTPHandler(r *chi.Mux, service *service.Service) {

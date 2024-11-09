@@ -1,40 +1,53 @@
 package service
 
-// type GiftCustomizationParams struct {
-// 	Name          string
-// 	Message       string
-// 	SenderEmail   string
-// 	ReceiverEmail string
-// 	Value         int
-// }
+import (
+	"github.com/charmingruby/txgo/internal/giftshop/core/model"
+	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+)
 
-// func (s *Service) GiftCustomizationService(params GiftCustomizationParams) error {
-// 	senderWallet, err := s.walletRepo.FindByOwnerEmail(params.SenderEmail)
-// 	if err != nil {
-// 		return core_err.NewResourceNotFoundErr("gift sender")
-// 	}
+type GiftCustomizationParams struct {
+	Name          string
+	Message       string
+	SenderEmail   string
+	ReceiverEmail string
+	Value         int
+}
 
-// 	receiverWallet, err := s.walletRepo.FindByOwnerEmail(params.ReceiverEmail)
-// 	if err != nil {
-// 		return core_err.NewResourceNotFoundErr("gift receiver")
-// 	}
+func (s *Service) GiftCustomizationService(params GiftCustomizationParams) error {
+	senderWallet, err := s.walletRepo.FindByOwnerEmail(params.SenderEmail)
+	if err != nil {
+		return err
+	}
 
-// 	newGiftInput := model.NewGiftInput{
-// 		Name:          params.Name,
-// 		Message:       params.Message,
-// 		SenderEmail:   senderWallet.OwnerEmail(),
-// 		ReceiverEmail: receiverWallet.OwnerEmail(),
-// 		BaseValue:     params.Value,
-// 	}
+	if senderWallet == nil {
+		return core_err.NewResourceNotFoundErr("gift sender")
+	}
 
-// 	newGift, err := model.NewGift(newGiftInput)
-// 	if err != nil {
-// 		return err
-// 	}
+	receiverWallet, err := s.walletRepo.FindByOwnerEmail(params.ReceiverEmail)
+	if err != nil {
+		return err
+	}
 
-// 	if err := s.giftRepo.Store(newGift); err != nil {
-// 		return err
-// 	}
+	if receiverWallet == nil {
+		return core_err.NewResourceNotFoundErr("gift receiver")
+	}
 
-// 	return nil
-// }
+	newGiftInput := model.NewGiftInput{
+		Name:             params.Name,
+		Message:          params.Message,
+		SenderWalletID:   senderWallet.ID(),
+		ReceiverWalletID: receiverWallet.ID(),
+		BaseValue:        params.Value,
+	}
+
+	newGift, err := model.NewGift(newGiftInput)
+	if err != nil {
+		return err
+	}
+
+	if err := s.giftRepo.Store(newGift); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -56,8 +56,9 @@ func main() {
 
 func initDependencies(r *chi.Mux, db *sql.DB) {
 	walletRepository := giftshop.NewWalletRepository(db)
+	giftRepository := giftshop.NewGiftRepository(db)
 
-	giftshopSvc := giftshop.NewService(walletRepository)
+	giftshopSvc := giftshop.NewService(walletRepository, giftRepository)
 
 	giftshop.NewHTTPHandler(r, giftshopSvc)
 }
