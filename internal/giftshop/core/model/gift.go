@@ -14,38 +14,38 @@ const (
 )
 
 type Gift struct {
-	id            string
-	name          string
-	message       string
-	receiverEmail string
-	senderEmail   string
-	baseValue     int
-	status        string
-	payment       *Payment
-	createdAt     time.Time
-	updatedAt     time.Time
+	id             string
+	name           string
+	message        string
+	receiverWallet *Wallet
+	senderWallet   *Wallet
+	baseValue      int
+	status         string
+	payment        *Payment
+	createdAt      time.Time
+	updatedAt      time.Time
 }
 
 type NewGiftInput struct {
-	Name          string
-	Message       string
-	BaseValue     int
-	SenderEmail   string
-	ReceiverEmail string
+	Name           string
+	Message        string
+	BaseValue      int
+	SenderWallet   *Wallet
+	ReceiverWallet *Wallet
 }
 
 func NewGift(in NewGiftInput) (*Gift, error) {
 	g := Gift{
-		id:            core.NewID(),
-		name:          in.Name,
-		message:       in.Message,
-		senderEmail:   in.SenderEmail,
-		receiverEmail: in.ReceiverEmail,
-		baseValue:     in.BaseValue,
-		status:        GIFT_STATUS_PENDING,
-		payment:       nil,
-		createdAt:     time.Now(),
-		updatedAt:     time.Now(),
+		id:             core.NewID(),
+		name:           in.Name,
+		message:        in.Message,
+		senderWallet:   in.SenderWallet,
+		receiverWallet: in.ReceiverWallet,
+		baseValue:      in.BaseValue,
+		status:         GIFT_STATUS_PENDING,
+		payment:        nil,
+		createdAt:      time.Now(),
+		updatedAt:      time.Now(),
 	}
 
 	if err := g.validate(); err != nil {
@@ -60,11 +60,11 @@ func (g *Gift) validate() error {
 		return core_err.NewModelErr("name is required")
 	}
 
-	if g.senderEmail == "" {
+	if g.senderWallet == nil || g.senderWallet.ownerEmail == "" {
 		return core_err.NewModelErr("senderEmail is required")
 	}
 
-	if g.receiverEmail == "" {
+	if g.receiverWallet == nil || g.receiverWallet.ownerEmail == "" {
 		return core_err.NewModelErr("receiverEmail is required")
 	}
 
@@ -76,11 +76,11 @@ func (g *Gift) validate() error {
 }
 
 func (g *Gift) SenderEmail() string {
-	return g.senderEmail
+	return g.senderWallet.ownerEmail
 }
 
 func (g *Gift) ReceiverEmail() string {
-	return g.receiverEmail
+	return g.receiverWallet.ownerEmail
 }
 
 func (g *Gift) BaseValue() int {
