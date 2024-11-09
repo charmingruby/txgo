@@ -51,6 +51,16 @@ func NewPayment(in NewPaymentInput) (*Payment, error) {
 	return &g, nil
 }
 
+type NewPaymentFromInput struct {
+	ID string
+}
+
+func NewPaymentFrom(in NewPaymentFromInput) *Payment {
+	return &Payment{
+		id: in.ID,
+	}
+}
+
 func (p *Payment) validate() error {
 	if p.installments < 1 {
 		return core_err.NewModelErr("installments must be greater than or equal to 1")
@@ -65,4 +75,8 @@ func (p *Payment) validate() error {
 	}
 
 	return nil
+}
+
+func (p *Payment) ID() string {
+	return p.id
 }
