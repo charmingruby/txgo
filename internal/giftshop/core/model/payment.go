@@ -13,6 +13,18 @@ const (
 	PAYMENT_STATUS_FAILED  = "FAILED"
 )
 
+type Payment struct {
+	id           string
+	installments int
+	taxPercent   int
+	partialValue int
+	totalValue   int
+	status       string
+	transaction  *Transaction
+	createdAt    time.Time
+	updatedAt    time.Time
+}
+
 type NewPaymentInput struct {
 	Installments int
 	TaxPercent   int
@@ -53,16 +65,4 @@ func (p *Payment) validate() error {
 	}
 
 	return nil
-}
-
-type Payment struct {
-	id           string
-	installments int
-	taxPercent   int
-	partialValue int
-	totalValue   int
-	status       string
-	transaction  *Transaction
-	createdAt    time.Time
-	updatedAt    time.Time
 }

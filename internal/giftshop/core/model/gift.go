@@ -13,6 +13,19 @@ const (
 	GIFT_STATUS_ACCEPTED = "ACCEPTED"
 )
 
+type Gift struct {
+	id            string
+	name          string
+	message       string
+	receiverEmail string
+	senderEmail   string
+	baseValue     int
+	status        string
+	payment       *Payment
+	createdAt     time.Time
+	updatedAt     time.Time
+}
+
 type NewGiftInput struct {
 	Name          string
 	Message       string
@@ -72,17 +85,4 @@ func (g *Gift) ReceiverEmail() string {
 
 func (g *Gift) BaseValue() int {
 	return g.baseValue
-}
-
-type Gift struct {
-	id            string
-	name          string
-	message       string
-	receiverEmail string
-	senderEmail   string
-	baseValue     int
-	status        string
-	payment       *Payment
-	createdAt     time.Time
-	updatedAt     time.Time
 }
