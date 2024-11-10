@@ -46,3 +46,27 @@ func (t *Transaction) validate() error {
 
 	return nil
 }
+
+func (t *Transaction) ID() string {
+	return t.id
+}
+
+func (t *Transaction) Points() int {
+	return t.points
+}
+
+func (t *Transaction) ReceiverWalletID() string {
+	return t.receiverWalletID
+}
+
+func (t *Transaction) SenderWalletID() string {
+	return t.senderWalletID
+}
+
+func (t *Transaction) CreatedAt() time.Time {
+	return t.createdAt
+}
+
+func (t *Transaction) UpdatedAt() time.Time {
+	return t.updatedAt
+}

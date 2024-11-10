@@ -76,6 +76,17 @@ func (r *GiftRepository) Store(gift *model.Gift) error {
 	return nil
 }
 
+func (r *GiftRepository) UpdatePaymentIDAndStatusByID(gift *model.Gift) error {
+	query := fmt.Sprintf("UPDATE %s SET payment_id = ?, status = ?, updated_at = ? WHERE id = ?", GIFTS_TABLE)
+
+	_, err := r.db.Exec(query, gift.PaymentID(), gift.Status(), gift.UpdatedAt(), gift.ID())
+	if err != nil {
+		return core_err.NewPersistenceErr(err, "gift update_payment_id_and_status_by_id", "mysql")
+	}
+
+	return nil
+}
+
 func (r *GiftRepository) mapToDomain(gift giftRow) *model.Gift {
 	return model.NewGiftFrom(model.NewGiftFromInput{
 		ID:               gift.ID,

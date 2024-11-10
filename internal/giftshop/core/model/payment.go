@@ -14,15 +14,15 @@ const (
 )
 
 type Payment struct {
-	id           string
-	installments int
-	taxPercent   int
-	partialValue int
-	totalValue   int
-	status       string
-	transaction  *Transaction
-	createdAt    time.Time
-	updatedAt    time.Time
+	id            string
+	installments  int
+	taxPercent    int
+	partialValue  int
+	totalValue    int
+	status        string
+	transactionID string
+	createdAt     time.Time
+	updatedAt     time.Time
 }
 
 type NewPaymentInput struct {
@@ -33,15 +33,15 @@ type NewPaymentInput struct {
 
 func NewPayment(in NewPaymentInput) (*Payment, error) {
 	g := Payment{
-		id:           core.NewID(),
-		installments: in.Installments,
-		taxPercent:   in.TaxPercent,
-		partialValue: 0,
-		totalValue:   in.TotalValue,
-		status:       PAYMENT_STATUS_PENDING,
-		transaction:  nil,
-		createdAt:    time.Now(),
-		updatedAt:    time.Now(),
+		id:            core.NewID(),
+		installments:  in.Installments,
+		taxPercent:    in.TaxPercent,
+		partialValue:  0,
+		totalValue:    in.TotalValue,
+		status:        PAYMENT_STATUS_PENDING,
+		transactionID: "",
+		createdAt:     time.Now(),
+		updatedAt:     time.Now(),
 	}
 
 	if err := g.validate(); err != nil {
@@ -49,16 +49,6 @@ func NewPayment(in NewPaymentInput) (*Payment, error) {
 	}
 
 	return &g, nil
-}
-
-type NewPaymentFromInput struct {
-	ID string
-}
-
-func NewPaymentFrom(in NewPaymentFromInput) *Payment {
-	return &Payment{
-		id: in.ID,
-	}
 }
 
 func (p *Payment) validate() error {
@@ -79,4 +69,55 @@ func (p *Payment) validate() error {
 
 func (p *Payment) ID() string {
 	return p.id
+}
+
+func (p *Payment) Installments() int {
+	return p.installments
+}
+
+func (p *Payment) TaxPercent() int {
+	return p.taxPercent
+}
+
+func (p *Payment) PartialValue() int {
+	return p.partialValue
+}
+
+func (p *Payment) SetPartialValue(value int) {
+	p.touch()
+	p.partialValue = value
+}
+
+func (p *Payment) TotalValue() int {
+	return p.totalValue
+}
+
+func (p *Payment) Status() string {
+	return p.status
+}
+
+func (p *Payment) Paid() {
+	p.touch()
+	p.status = PAYMENT_STATUS_PAID
+}
+
+func (p *Payment) TransactionID() string {
+	return p.transactionID
+}
+
+func (p *Payment) SetTransactionID(transactionID string) {
+	p.touch()
+	p.transactionID = transactionID
+}
+
+func (p *Payment) CreatedAt() time.Time {
+	return p.createdAt
+}
+
+func (p *Payment) UpdatedAt() time.Time {
+	return p.updatedAt
+}
+
+func (p *Payment) touch() {
+	p.updatedAt = time.Now()
 }

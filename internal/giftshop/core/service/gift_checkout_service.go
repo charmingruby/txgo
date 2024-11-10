@@ -1,58 +1,107 @@
 package service
 
-// type GiftCheckoutParams struct {
-// 	GiftID       string
-// 	TaxPercent   int
-// 	Installments int
-// }
+import (
+	"github.com/charmingruby/txgo/internal/giftshop/core/model"
+	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+)
 
-// func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
-// 	gift, err := s.giftRepo.FindByID(params.GiftID)
-// 	if err != nil {
-// 		return core_err.NewResourceNotFoundErr("gift")
-// 	}
+type GiftCheckoutParams struct {
+	GiftID       string
+	TaxPercent   int
+	Installments int
+}
 
-// 	receiverWallet, err := s.walletRepo.FindByOwnerEmail(gift.ReceiverEmail())
-// 	if err != nil {
-// 		return core_err.NewResourceNotFoundErr("receiver wallet")
-// 	}
+func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
+	gift, err := s.giftRepo.FindByID(params.GiftID)
+	if err != nil {
+		return err
+	}
 
-// 	senderWallet, err := s.walletRepo.FindByOwnerEmail(gift.SenderEmail())
-// 	if err != nil {
-// 		return core_err.NewResourceNotFoundErr("sender wallet")
-// 	}
+	if gift == nil {
+		return core_err.NewResourceNotFoundErr("gift")
+	}
 
-// 	newPaymentInput := model.NewPaymentInput{
-// 		Installments: params.Installments,
-// 		TaxPercent:   params.TaxPercent,
-// 		TotalValue:   gift.BaseValue(),
-// 	}
+	if gift.PaymentID() != "" {
+		return core_err.NewResourceAlreadyExistsErr("payment")
+	}
 
-// 	payment, err := model.NewPayment(newPaymentInput)
-// 	if err != nil {
-// 		return err
-// 	}
+	senderWallet, err := s.walletRepo.FindByID(gift.SenderWalletID())
+	if err != nil {
+		return err
+	}
 
-// 	payment.CalculatePartialValue()
+	if senderWallet == nil {
+		return core_err.NewResourceNotFoundErr("sender wallet")
+	}
 
-// 	if err := s.paymentRepo.Store(payment); err != nil {
-// 		return err
-// 	}
+	receiverWallet, err := s.walletRepo.FindByID(gift.ReceiverWalletID())
+	if err != nil {
+		return err
+	}
 
-// 	transactionInput := model.NewTransactionInput{
-// 		Points:         gift.BaseValue(),
-// 		ReceiverWallet: receiverWallet,
-// 		SenderWallet:   senderWallet,
-// 	}
+	if receiverWallet == nil {
+		return core_err.NewResourceNotFoundErr("receiver wallet")
+	}
 
-// 	transaction, err := model.NewTransaction(transactionInput)
-// 	if err != nil {
-// 		return err
-// 	}
+	newPaymentInput := model.NewPaymentInput{
+		Installments: params.Installments,
+		TaxPercent:   params.TaxPercent,
+		TotalValue:   gift.BaseValue(),
+	}
 
-// 	if err := s.transactionRepo.Store(transaction); err != nil {
-// 		return err
-// 	}
+	payment, err := model.NewPayment(newPaymentInput)
+	if err != nil {
+		return err
+	}
 
-// 	return err
-// }
+	payment.SetPartialValue(calculatePartialValue(payment))
+
+	if err := s.paymentRepo.Store(payment); err != nil {
+		return err
+	}
+
+	transactionInput := model.NewTransactionInput{
+		Points:           payment.PartialValue(),
+		ReceiverWalletID: gift.ReceiverWalletID(),
+		SenderWalletID:   gift.SenderWalletID(),
+	}
+
+	transaction, err := model.NewTransaction(transactionInput)
+	if err != nil {
+		return err
+	}
+
+	if err := s.transactionRepo.Store(transaction); err != nil {
+		return err
+	}
+
+	receiverWallet.SetPoints(+payment.PartialValue())
+	if err := s.walletRepo.UpdatePointsByID(receiverWallet); err != nil {
+		return err
+	}
+
+	senderWallet.SetPoints(-payment.PartialValue())
+	if err := s.walletRepo.UpdatePointsByID(senderWallet); err != nil {
+		return err
+	}
+
+	payment.Paid()
+	payment.SetTransactionID(transaction.ID())
+	if err := s.paymentRepo.UpdateTransactionIDAndStatusByID(payment); err != nil {
+		return err
+	}
+
+	gift.SetPaymentID(payment.ID())
+	gift.Sent()
+	if err := s.giftRepo.UpdatePaymentIDAndStatusByID(gift); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func calculatePartialValue(payment *model.Payment) int {
+	totalValueWithTax := payment.TotalValue() + (payment.TotalValue() * payment.TaxPercent() / 100)
+	partialValue := totalValueWithTax / payment.Installments()
+	return partialValue
+}

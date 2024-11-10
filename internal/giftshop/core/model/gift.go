@@ -123,6 +123,11 @@ func (g *Gift) Status() string {
 	return g.status
 }
 
+func (g *Gift) Sent() {
+	g.touch()
+	g.status = GIFT_STATUS_SENT
+}
+
 func (g *Gift) SenderWalletID() string {
 	return g.senderWalletID
 }
@@ -135,10 +140,19 @@ func (g *Gift) PaymentID() string {
 	return g.paymentID
 }
 
+func (g *Gift) SetPaymentID(paymentID string) {
+	g.touch()
+	g.paymentID = paymentID
+}
+
 func (g *Gift) CreatedAt() time.Time {
 	return g.createdAt
 }
 
 func (g *Gift) UpdatedAt() time.Time {
 	return g.updatedAt
+}
+
+func (g *Gift) touch() {
+	g.updatedAt = time.Now()
 }

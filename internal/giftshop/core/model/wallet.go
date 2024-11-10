@@ -91,10 +91,19 @@ func (w *Wallet) Points() int {
 	return w.points
 }
 
+func (w *Wallet) SetPoints(points int) {
+	w.touch()
+	w.points = points
+}
+
 func (w *Wallet) CreatedAt() time.Time {
 	return w.createdAt
 }
 
 func (w *Wallet) UpdatedAt() time.Time {
 	return w.updatedAt
+}
+
+func (w *Wallet) touch() {
+	w.updatedAt = time.Now()
 }
