@@ -8,14 +8,12 @@ import (
 )
 
 func Test_NewTransaction(t *testing.T) {
-	dummyReceiverWalletID := "receiver_wallet"
-	dummySenderWalletID := "sender_wallet"
+	dummyPayerWalletID := "payer_wallet_id"
 
 	t.Run("it should be able to create a transaction with valid params", func(t *testing.T) {
 		input := NewTransactionInput{
-			Points:           100,
-			ReceiverWalletID: dummyReceiverWalletID,
-			SenderWalletID:   dummySenderWalletID,
+			Points:        100,
+			PayerWalletID: dummyPayerWalletID,
 		}
 
 		transaction, err := NewTransaction(input)
@@ -23,15 +21,13 @@ func Test_NewTransaction(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, transaction)
 		assert.Equal(t, 100, transaction.points)
-		assert.Equal(t, dummyReceiverWalletID, transaction.receiverWalletID)
-		assert.Equal(t, dummySenderWalletID, transaction.senderWalletID)
+		assert.Equal(t, dummyPayerWalletID, transaction.PayerWalletID())
 	})
 
 	t.Run("it should not be able to create a transaction with points less than or equal to 0", func(t *testing.T) {
 		input := NewTransactionInput{
-			Points:           0,
-			ReceiverWalletID: dummyReceiverWalletID,
-			SenderWalletID:   dummySenderWalletID,
+			Points:        0,
+			PayerWalletID: dummyPayerWalletID,
 		}
 
 		transaction, err := NewTransaction(input)

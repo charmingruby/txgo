@@ -25,6 +25,6 @@ func (e *Endpoint) Register() {
 
 	e.router.Route("/gifts", func(r chi.Router) {
 		r.Post("/customize", e.giftCustomizationHandler())
-		r.Post("/checkout", e.giftCheckoutHandler())
+		r.Post("/{giftID}/checkout", e.giftCheckoutHandler())
 	})
 }

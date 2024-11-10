@@ -41,6 +41,8 @@ func (r *GiftRepository) FindByID(id string) (*model.Gift, error) {
 
 	var row giftRow
 
+	var paymentID sql.NullString
+
 	if err := queryResult.Scan(
 		&row.ID,
 		&row.Name,
@@ -49,7 +51,7 @@ func (r *GiftRepository) FindByID(id string) (*model.Gift, error) {
 		&row.Status,
 		&row.ReceiverWalletID,
 		&row.SenderWalletID,
-		&row.PaymentID,
+		&paymentID,
 		&row.CreatedAt,
 		&row.UpdatedAt,
 	); err != nil {

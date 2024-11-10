@@ -8,28 +8,25 @@ import (
 )
 
 type Transaction struct {
-	id               string
-	points           int
-	receiverWalletID string
-	senderWalletID   string
-	createdAt        time.Time
-	updatedAt        time.Time
+	id            string
+	points        int
+	payerWalletID string
+	createdAt     time.Time
+	updatedAt     time.Time
 }
 
 type NewTransactionInput struct {
-	Points           int
-	ReceiverWalletID string
-	SenderWalletID   string
+	Points        int
+	PayerWalletID string
 }
 
 func NewTransaction(in NewTransactionInput) (*Transaction, error) {
 	t := Transaction{
-		id:               core.NewID(),
-		points:           in.Points,
-		receiverWalletID: in.ReceiverWalletID,
-		senderWalletID:   in.SenderWalletID,
-		createdAt:        time.Now(),
-		updatedAt:        time.Now(),
+		id:            core.NewID(),
+		points:        in.Points,
+		payerWalletID: in.PayerWalletID,
+		createdAt:     time.Now(),
+		updatedAt:     time.Now(),
 	}
 
 	if err := t.validate(); err != nil {
@@ -55,12 +52,8 @@ func (t *Transaction) Points() int {
 	return t.points
 }
 
-func (t *Transaction) ReceiverWalletID() string {
-	return t.receiverWalletID
-}
-
-func (t *Transaction) SenderWalletID() string {
-	return t.senderWalletID
+func (t *Transaction) PayerWalletID() string {
+	return t.payerWalletID
 }
 
 func (t *Transaction) CreatedAt() time.Time {

@@ -34,8 +34,16 @@ func NotFoundErrorResponse(w http.ResponseWriter, message string) {
 	newResponse(w, http.StatusNotFound, message, nil)
 }
 
+func ModelValidationErrorResponse(w http.ResponseWriter, message string) {
+	newResponse(w, http.StatusUnprocessableEntity, message, nil)
+}
+
 func ConflictErrorResponse(w http.ResponseWriter, message string) {
 	newResponse(w, http.StatusConflict, message, nil)
+}
+
+func ForbiddenErrorResponse(w http.ResponseWriter, message string) {
+	newResponse(w, http.StatusForbidden, message, nil)
 }
 
 func InternalServerErrorResponse(w http.ResponseWriter) {
@@ -44,4 +52,8 @@ func InternalServerErrorResponse(w http.ResponseWriter) {
 
 func CreatedResponse(w http.ResponseWriter, createdResource string) {
 	newResponse(w, http.StatusCreated, createdResource+" created succesfully", nil)
+}
+
+func OkResponse(w http.ResponseWriter, message string) {
+	newResponse(w, http.StatusOK, message, nil)
 }

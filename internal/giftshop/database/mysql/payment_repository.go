@@ -23,6 +23,8 @@ type PaymentRepository struct {
 func (r *PaymentRepository) Store(payment *model.Payment) error {
 	query := fmt.Sprintf("INSERT INTO %s (id, installments, tax_percent, partial_value, total_value, status, transaction_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", PAYMENTS_TABLE)
 
+	transactionID := sql.NullString{String: payment.TransactionID(), Valid: payment.TransactionID() != ""}
+
 	_, err := r.db.Exec(query,
 		payment.ID(),
 		payment.Installments(),
@@ -30,7 +32,7 @@ func (r *PaymentRepository) Store(payment *model.Payment) error {
 		payment.PartialValue(),
 		payment.TotalValue(),
 		payment.Status(),
-		payment.TransactionID(),
+		transactionID,
 		payment.CreatedAt(),
 		payment.UpdatedAt())
 	if err != nil {

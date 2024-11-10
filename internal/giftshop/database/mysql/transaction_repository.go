@@ -21,13 +21,12 @@ type TransactionRepository struct {
 }
 
 func (r *TransactionRepository) Store(transaction *model.Transaction) error {
-	query := fmt.Sprintf("INSERT INTO %s (id, points, sender_wallet_id, receiver_wallet_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", TRANSACTIONS_TABLE)
+	query := fmt.Sprintf("INSERT INTO %s (id, points, payer_wallet_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", TRANSACTIONS_TABLE)
 
 	_, err := r.db.Exec(query,
 		transaction.ID(),
 		transaction.Points(),
-		transaction.SenderWalletID(),
-		transaction.ReceiverWalletID(),
+		transaction.PayerWalletID(),
 		transaction.CreatedAt(),
 		transaction.UpdatedAt(),
 	)

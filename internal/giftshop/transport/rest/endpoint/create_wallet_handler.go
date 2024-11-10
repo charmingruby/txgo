@@ -27,6 +27,12 @@ func (e *Endpoint) createWalletHandler() http.HandlerFunc {
 		}
 
 		if err := e.service.CreateWalletService(serviceInput); err != nil {
+			var validationErr *core_err.ModelErr
+			if errors.As(err, &validationErr) {
+				rest.ModelValidationErrorResponse(w, err.Error())
+				return
+			}
+
 			var resourceExistsErr *core_err.ResourceAlreadyExistsErr
 			if errors.As(err, &resourceExistsErr) {
 				rest.ConflictErrorResponse(w, err.Error())

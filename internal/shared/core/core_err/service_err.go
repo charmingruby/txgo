@@ -16,6 +16,20 @@ func (e *ResourceNotFoundErr) Error() string {
 	return e.Message
 }
 
+type InvalidFundsErr struct {
+	Message string `json:"message"`
+}
+
+func NewInvalidFundsErr(missingPoints int) *InvalidFundsErr {
+	return &InvalidFundsErr{
+		Message: fmt.Sprintf("invalid funds, missing %d points", missingPoints),
+	}
+}
+
+func (e *InvalidFundsErr) Error() string {
+	return e.Message
+}
+
 type ResourceAlreadyExistsErr struct {
 	Message string `json:"message"`
 }

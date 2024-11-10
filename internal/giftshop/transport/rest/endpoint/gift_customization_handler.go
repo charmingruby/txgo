@@ -29,6 +29,12 @@ func (e *Endpoint) giftCustomizationHandler() http.HandlerFunc {
 		}
 
 		if err := e.service.GiftCustomizationService(serviceInput); err != nil {
+			var validationErr *core_err.ModelErr
+			if errors.As(err, &validationErr) {
+				rest.ModelValidationErrorResponse(w, err.Error())
+				return
+			}
+
 			var notFoundErr *core_err.ResourceNotFoundErr
 			if errors.As(err, &notFoundErr) {
 				rest.NotFoundErrorResponse(w, err.Error())

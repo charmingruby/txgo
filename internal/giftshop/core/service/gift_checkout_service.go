@@ -34,13 +34,12 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 		return core_err.NewResourceNotFoundErr("sender wallet")
 	}
 
-	receiverWallet, err := s.walletRepo.FindByID(gift.ReceiverWalletID())
-	if err != nil {
-		return err
-	}
+	partialValue := calculatePartialValue(gift.BaseValue(), params.TaxPercent, params.Installments)
 
-	if receiverWallet == nil {
-		return core_err.NewResourceNotFoundErr("receiver wallet")
+	pointsDiff := senderWallet.Points() - partialValue
+
+	if pointsDiff < 0 {
+		return core_err.NewInvalidFundsErr(pointsDiff * -1)
 	}
 
 	newPaymentInput := model.NewPaymentInput{
@@ -54,16 +53,15 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 		return err
 	}
 
-	payment.SetPartialValue(calculatePartialValue(payment))
+	payment.SetPartialValue(partialValue)
 
 	if err := s.paymentRepo.Store(payment); err != nil {
 		return err
 	}
 
 	transactionInput := model.NewTransactionInput{
-		Points:           payment.PartialValue(),
-		ReceiverWalletID: gift.ReceiverWalletID(),
-		SenderWalletID:   gift.SenderWalletID(),
+		Points:        payment.PartialValue(),
+		PayerWalletID: gift.SenderWalletID(),
 	}
 
 	transaction, err := model.NewTransaction(transactionInput)
@@ -75,12 +73,8 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 		return err
 	}
 
-	receiverWallet.SetPoints(+payment.PartialValue())
-	if err := s.walletRepo.UpdatePointsByID(receiverWallet); err != nil {
-		return err
-	}
-
-	senderWallet.SetPoints(-payment.PartialValue())
+	newWalletBalance := senderWallet.Points() - payment.PartialValue()
+	senderWallet.SetPoints(newWalletBalance)
 	if err := s.walletRepo.UpdatePointsByID(senderWallet); err != nil {
 		return err
 	}
@@ -91,8 +85,8 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 		return err
 	}
 
-	gift.SetPaymentID(payment.ID())
 	gift.Sent()
+	gift.SetPaymentID(payment.ID())
 	if err := s.giftRepo.UpdatePaymentIDAndStatusByID(gift); err != nil {
 		return err
 	}
@@ -100,8 +94,8 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) error {
 	return nil
 }
 
-func calculatePartialValue(payment *model.Payment) int {
-	totalValueWithTax := payment.TotalValue() + (payment.TotalValue() * payment.TaxPercent() / 100)
-	partialValue := totalValueWithTax / payment.Installments()
+func calculatePartialValue(totalValue, taxPercent, installments int) int {
+	totalValueWithTax := totalValue + (totalValue * taxPercent / 100)
+	partialValue := totalValueWithTax / installments
 	return partialValue
 }
