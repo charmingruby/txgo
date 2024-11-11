@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-chi/chi/middleware"
@@ -32,6 +33,10 @@ func (s *RestServer) Run() error {
 	}
 
 	return nil
+}
+
+func (s *RestServer) Shutdown(ctx context.Context) error {
+	return s.httpServer.Shutdown(ctx)
 }
 
 func attachBaseMiddlewares(router *chi.Mux) {
