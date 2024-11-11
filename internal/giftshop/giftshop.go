@@ -16,7 +16,7 @@ func NewService(
 	paymentRepository repository.PaymentRepository,
 	transactionRepository repository.TransactionRepository,
 ) *service.Service {
-	return service.NewService(paymentRepository, giftRepository, walletRepository, transactionRepository)
+	return service.New(paymentRepository, giftRepository, walletRepository, transactionRepository)
 }
 
 func NewWalletRepository(db *sql.DB) repository.WalletRepository {

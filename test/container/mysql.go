@@ -82,6 +82,11 @@ func NewMySQL() *MySQL {
 }
 
 func (m *MySQL) Teardown() error {
+	if err := m.RollbackMigrations(); err != nil {
+		slog.Error(fmt.Sprintf("MYSQL TESTCONTAINER: failed to rollback migrations: %s", err))
+		return err
+	}
+
 	if err := m.DB.Close(); err != nil {
 		slog.Error(fmt.Sprintf("MYSQL TESTCONTAINER: failed to close database connection: %s", err))
 		return err

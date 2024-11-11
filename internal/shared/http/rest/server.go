@@ -10,8 +10,8 @@ import (
 )
 
 type RestServer struct {
-	httpServer *http.Server
-	router     *chi.Mux
+	HttpServer *http.Server
+	Router     *chi.Mux
 }
 
 func NewServer(port string, router *chi.Mux) *RestServer {
@@ -22,13 +22,13 @@ func NewServer(port string, router *chi.Mux) *RestServer {
 	attachBaseMiddlewares(router)
 
 	return &RestServer{
-		httpServer: &httpServer,
-		router:     router,
+		HttpServer: &httpServer,
+		Router:     router,
 	}
 }
 
 func (s *RestServer) Run() error {
-	if err := http.ListenAndServe(":3000", s.router); err != nil {
+	if err := http.ListenAndServe(s.HttpServer.Addr, s.Router); err != nil {
 		return err
 	}
 
@@ -36,7 +36,7 @@ func (s *RestServer) Run() error {
 }
 
 func (s *RestServer) Shutdown(ctx context.Context) error {
-	return s.httpServer.Shutdown(ctx)
+	return s.HttpServer.Shutdown(ctx)
 }
 
 func attachBaseMiddlewares(router *chi.Mux) {

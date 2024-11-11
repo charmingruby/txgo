@@ -9,7 +9,7 @@ type Service struct {
 	transactionRepo repository.TransactionRepository
 }
 
-func NewService(
+func New(
 	paymentRepo repository.PaymentRepository,
 	giftRepo repository.GiftRepository,
 	walletRepo repository.WalletRepository,
