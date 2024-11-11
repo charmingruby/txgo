@@ -20,7 +20,7 @@ type MySQLConnectionInput struct {
 }
 
 func New(in MySQLConnectionInput) (*sql.DB, error) {
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", in.Username, in.Password, in.Host, in.Port, in.DatabaseName)
+	connectionString := BuildConnectionString(false, in)
 
 	db, err := sql.Open(DATASOURCE, connectionString)
 	if err != nil {
@@ -32,4 +32,12 @@ func New(in MySQLConnectionInput) (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func BuildConnectionString(hasDatasourcePrefix bool, in MySQLConnectionInput) string {
+	if !hasDatasourcePrefix {
+		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", in.Username, in.Password, in.Host, in.Port, in.DatabaseName)
+	}
+
+	return fmt.Sprintf("%s://%s:%s@tcp(%s:%s)/%s?parseTime=true", DATASOURCE, in.Username, in.Password, in.Host, in.Port, in.DatabaseName)
 }
