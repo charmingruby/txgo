@@ -1,8 +1,8 @@
 services:
   database:
     platform: linux/x86_64
-    image: mysql:5.7
     container_name: txgo-db
+    image: mysql:5.7
     restart: always
     environment:
       MYSQL_DATABASE: "db"
@@ -15,3 +15,15 @@ services:
       - "3306"
     volumes:
       - "./.docker/mysql:/var/lib/mysql"
+
+  app:
+    platform: linux/x86_64
+    container_name: txgo-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
