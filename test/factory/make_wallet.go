@@ -11,11 +11,11 @@ import (
 )
 
 type MakeWalletParams struct {
-	model.NewWalletFromInput
+	Input model.NewWalletFromInput
 }
 
 func MakeWallet(walletRepo repository.WalletRepository, params MakeWalletParams) (*model.Wallet, error) {
-	wallet := createWallet(params.NewWalletFromInput)
+	wallet := createWallet(params.Input)
 
 	if err := walletRepo.Store(wallet); err != nil {
 		return nil, err
