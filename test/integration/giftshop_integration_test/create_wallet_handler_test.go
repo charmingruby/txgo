@@ -1,4 +1,4 @@
-package integration
+package giftshop_integration_test
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 	"github.com/charmingruby/txgo/test/factory"
+	"github.com/charmingruby/txgo/test/integration"
 )
 
 func (s *Suite) Test_CreateWalletHandler() {
@@ -26,12 +27,12 @@ func (s *Suite) Test_CreateWalletHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusCreated, httpRes.StatusCode)
 
-		decodedRes, err := decodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse(httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusCreated)
 		s.Equal(decodedRes.Message, "wallet created successfully")
@@ -54,12 +55,12 @@ func (s *Suite) Test_CreateWalletHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, httpRes.StatusCode)
 
-		decodedRes, err := decodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse(httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusBadRequest)
 		s.Equal(decodedRes.Message, "request validation failed: Key: 'CreateWalletRequest.OwnerEmail' Error:Field validation for 'OwnerEmail' failed on the 'email' tag")
@@ -85,12 +86,12 @@ func (s *Suite) Test_CreateWalletHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusConflict, httpRes.StatusCode)
 
-		decodedRes, err := decodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse(httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusConflict)
 		s.Equal(decodedRes.Message, core_err.NewResourceAlreadyExistsErr("wallet").Error())
@@ -107,12 +108,12 @@ func (s *Suite) Test_CreateWalletHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusUnprocessableEntity, httpRes.StatusCode)
 
-		decodedRes, err := decodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse(httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusUnprocessableEntity)
 		s.Equal(decodedRes.Message, "points must be greater than or equal to 0")

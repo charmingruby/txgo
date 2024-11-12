@@ -21,7 +21,7 @@ const (
 	DATABASE_USERNAME = "root"
 	DATABASE_PASSWORD = "password"
 
-	MIGRATIONS_PATH = "../../db/migration"
+	MIGRATIONS_PATH = "../../../db/migration"
 )
 
 var (

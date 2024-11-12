@@ -12,7 +12,7 @@ const (
 	CONTENT_TYPE_JSON = "application/json"
 )
 
-func decodeResponse(r *http.Response) (rest.Response, error) {
+func DecodeResponse(r *http.Response) (rest.Response, error) {
 	resBody := r.Body
 	defer resBody.Close()
 
