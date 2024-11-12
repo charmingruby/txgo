@@ -45,31 +45,22 @@ func (s *Suite) SetupTest() {
 
 	service := service.New(s.paymentRepo, s.giftRepo, s.walletRepo, s.transactionRepo)
 
+	server := rest.NewServer("3000", router)
+
 	s.handler = endpoint.New(router, service)
 	s.handler.Register()
-
-	server := rest.NewServer("3000", router)
 
 	s.server = httptest.NewServer(server.Router)
 }
 
 func (s *Suite) SetupSubTest() {
 	err := s.dbContainer.RunMigrations()
-
 	s.NoError(err)
 }
 
 func (s *Suite) TearDownSubTest() {
 	err := s.dbContainer.RollbackMigrations()
-
 	s.NoError(err)
-}
-
-func (s *Suite) TearDownTest() {
-	err := s.dbContainer.Teardown()
-	s.NoError(err)
-
-	s.server.Close()
 }
 
 func TestSuite(t *testing.T) {

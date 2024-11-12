@@ -9,6 +9,7 @@ import (
 	"os"
 
 	mysqlConn "github.com/charmingruby/txgo/pkg/mysql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -142,7 +143,7 @@ func (c *MySQL) RollbackMigrations() error {
 	}
 	defer m.Close()
 
-	if err := m.Down(); err != nil {
+	if err := m.Down(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		slog.Error(fmt.Sprintf("MYSQL MIGRATION TESTCONTAINER: failed to run migrations: %s", err))
 		return err
 	}
