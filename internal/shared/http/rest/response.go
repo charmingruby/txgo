@@ -51,7 +51,7 @@ func InternalServerErrorResponse(w http.ResponseWriter) {
 }
 
 func CreatedResponse(w http.ResponseWriter, createdResource string) {
-	newResponse(w, http.StatusCreated, createdResource+" created succesfully", nil)
+	newResponse(w, http.StatusCreated, createdResource+" created successfully", nil)
 }
 
 func OkResponse(w http.ResponseWriter, message string) {

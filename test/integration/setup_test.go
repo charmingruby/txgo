@@ -1,4 +1,4 @@
-package endpoint
+package integration
 
 import (
 	"net/http/httptest"
