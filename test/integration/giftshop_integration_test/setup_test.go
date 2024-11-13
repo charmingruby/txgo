@@ -63,6 +63,10 @@ func (s *Suite) TearDownSubTest() {
 	s.NoError(err)
 }
 
+func (s *Suite) TearDownTest() {
+	s.server.Close()
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
