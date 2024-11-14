@@ -10,12 +10,8 @@ import (
 	"github.com/charmingruby/txgo/internal/shared/helper"
 )
 
-type MakeWalletParams struct {
-	Input model.NewWalletFromInput
-}
-
-func MakeWallet(walletRepo repository.WalletRepository, params MakeWalletParams) (*model.Wallet, error) {
-	wallet := createWallet(params.Input)
+func MakeWallet(walletRepo repository.WalletRepository, params model.NewWalletFromInput) (*model.Wallet, error) {
+	wallet := createWallet(params)
 
 	if err := walletRepo.Store(wallet); err != nil {
 		return nil, err

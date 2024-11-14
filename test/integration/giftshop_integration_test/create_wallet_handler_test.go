@@ -32,7 +32,7 @@ func (s *Suite) Test_CreateWalletHandler() {
 
 		s.Equal(http.StatusCreated, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusCreated)
 		s.Equal(decodedRes.Message, "wallet created successfully")
@@ -60,7 +60,7 @@ func (s *Suite) Test_CreateWalletHandler() {
 
 		s.Equal(http.StatusBadRequest, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusBadRequest)
 		s.Equal(decodedRes.Message, "request validation failed: Key: 'CreateWalletRequest.OwnerEmail' Error:Field validation for 'OwnerEmail' failed on the 'email' tag")
@@ -70,10 +70,8 @@ func (s *Suite) Test_CreateWalletHandler() {
 	s.Run("it should be not able to create a new wallet with an existing owner email", func() {
 		conflictingEmail := "my_wallet@email.com"
 
-		_, err := factory.MakeWallet(s.walletRepo, factory.MakeWalletParams{
-			Input: model.NewWalletFromInput{
-				OwnerEmail: conflictingEmail,
-			},
+		_, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{
+			OwnerEmail: conflictingEmail,
 		})
 		s.NoError(err)
 
@@ -91,7 +89,7 @@ func (s *Suite) Test_CreateWalletHandler() {
 
 		s.Equal(http.StatusConflict, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusConflict)
 		s.Equal(decodedRes.Message, core_err.NewResourceAlreadyExistsErr("wallet").Error())
@@ -113,7 +111,7 @@ func (s *Suite) Test_CreateWalletHandler() {
 
 		s.Equal(http.StatusUnprocessableEntity, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse(httpRes)
+		decodedRes, err := integration.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusUnprocessableEntity)
 		s.Equal(decodedRes.Message, "points must be greater than or equal to 0")

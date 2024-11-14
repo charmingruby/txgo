@@ -8,6 +8,7 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/service"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
+	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/response"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 	"github.com/charmingruby/txgo/internal/shared/http/rest"
 	"github.com/go-chi/chi/v5"
@@ -17,13 +18,13 @@ func (e *Endpoint) giftCheckoutHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		giftID := chi.URLParam(r, "giftID")
 		if giftID == "" {
-			rest.BadRequestErrorResponse(w, "giftID path param is required")
+			rest.BadRequestErrorResponse[any](w, "giftID path param is required")
 			return
 		}
 
 		req, err := rest.ParseRequest[request.GiftCheckoutRequest](*e.validator, r)
 		if err != nil {
-			rest.BadRequestErrorResponse(w, err.Error())
+			rest.BadRequestErrorResponse[any](w, err.Error())
 			return
 		}
 
@@ -33,43 +34,49 @@ func (e *Endpoint) giftCheckoutHandler() http.HandlerFunc {
 			Installments: req.Installments,
 		}
 
-		if err := e.service.GiftCheckoutService(serviceInput); err != nil {
+		result, err := e.service.GiftCheckoutService(serviceInput)
+		if err != nil {
 			var validationErr *core_err.ModelErr
 			if errors.As(err, &validationErr) {
-				rest.ModelValidationErrorResponse(w, err.Error())
+				rest.ModelValidationErrorResponse[any](w, err.Error())
 				return
 			}
 
 			var notFoundErr *core_err.ResourceNotFoundErr
 			if errors.As(err, &notFoundErr) {
-				rest.NotFoundErrorResponse(w, err.Error())
+				rest.NotFoundErrorResponse[any](w, err.Error())
 				return
 			}
 
 			var alreadyExistsErr *core_err.ResourceAlreadyExistsErr
 			if errors.As(err, &alreadyExistsErr) {
-				rest.ConflictErrorResponse(w, alreadyExistsErr.Error())
+				rest.ConflictErrorResponse[any](w, alreadyExistsErr.Error())
 				return
 			}
 
 			var invalidFundsErr *core_err.InvalidFundsErr
 			if errors.As(err, &invalidFundsErr) {
-				rest.ForbiddenErrorResponse(w, invalidFundsErr.Error())
+				rest.ForbiddenErrorResponse[any](w, invalidFundsErr.Error())
 				return
 			}
 
 			var storageErr *core_err.PersistenceErr
 			if errors.As(err, &storageErr) {
 				slog.Error(fmt.Sprintf("PERSISTENCE ERROR: %s", storageErr.Error()))
-				rest.InternalServerErrorResponse(w)
+				rest.InternalServerErrorResponse[any](w)
 				return
 			}
 
 			slog.Error(fmt.Sprintf("UNEXPECTED ERROR: %s", err.Error()))
-			rest.InternalServerErrorResponse(w)
+			rest.InternalServerErrorResponse[any](w)
 			return
 		}
 
-		rest.OkResponse(w, "gift checkout success")
+		data := response.GiftCheckoutResponse{
+			PaymentID:     result.PaymentID,
+			TransactionID: result.TransactionID,
+		}
+
+		rest.OkResponse[response.GiftCheckoutResponse](w, "gift checkout success", data)
 	}
 }

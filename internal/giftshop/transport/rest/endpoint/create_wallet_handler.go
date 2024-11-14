@@ -16,7 +16,7 @@ func (e *Endpoint) createWalletHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req, err := rest.ParseRequest[request.CreateWalletRequest](*e.validator, r)
 		if err != nil {
-			rest.BadRequestErrorResponse(w, err.Error())
+			rest.BadRequestErrorResponse[any](w, err.Error())
 			return
 		}
 
@@ -29,28 +29,28 @@ func (e *Endpoint) createWalletHandler() http.HandlerFunc {
 		if err := e.service.CreateWalletService(serviceInput); err != nil {
 			var validationErr *core_err.ModelErr
 			if errors.As(err, &validationErr) {
-				rest.ModelValidationErrorResponse(w, err.Error())
+				rest.ModelValidationErrorResponse[any](w, err.Error())
 				return
 			}
 
 			var resourceExistsErr *core_err.ResourceAlreadyExistsErr
 			if errors.As(err, &resourceExistsErr) {
-				rest.ConflictErrorResponse(w, err.Error())
+				rest.ConflictErrorResponse[any](w, err.Error())
 				return
 			}
 
 			var storageErr *core_err.PersistenceErr
 			if errors.As(err, &storageErr) {
 				slog.Error(fmt.Sprintf("PERSISTENCE ERROR: %s", storageErr.Error()))
-				rest.InternalServerErrorResponse(w)
+				rest.InternalServerErrorResponse[any](w)
 				return
 			}
 
 			slog.Error(fmt.Sprintf("UNEXPECTED ERROR: %s", err.Error()))
-			rest.InternalServerErrorResponse(w)
+			rest.InternalServerErrorResponse[any](w)
 			return
 		}
 
-		rest.CreatedResponse(w, "wallet")
+		rest.CreatedResponse[any](w, "wallet")
 	}
 }

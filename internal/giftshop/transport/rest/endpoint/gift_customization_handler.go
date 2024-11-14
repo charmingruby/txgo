@@ -16,7 +16,7 @@ func (e *Endpoint) giftCustomizationHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req, err := rest.ParseRequest[request.GiftCustomizationRequest](*e.validator, r)
 		if err != nil {
-			rest.BadRequestErrorResponse(w, err.Error())
+			rest.BadRequestErrorResponse[any](w, err.Error())
 			return
 		}
 
@@ -31,28 +31,28 @@ func (e *Endpoint) giftCustomizationHandler() http.HandlerFunc {
 		if err := e.service.GiftCustomizationService(serviceInput); err != nil {
 			var validationErr *core_err.ModelErr
 			if errors.As(err, &validationErr) {
-				rest.ModelValidationErrorResponse(w, err.Error())
+				rest.ModelValidationErrorResponse[any](w, err.Error())
 				return
 			}
 
 			var notFoundErr *core_err.ResourceNotFoundErr
 			if errors.As(err, &notFoundErr) {
-				rest.NotFoundErrorResponse(w, err.Error())
+				rest.NotFoundErrorResponse[any](w, err.Error())
 				return
 			}
 
 			var storageErr *core_err.PersistenceErr
 			if errors.As(err, &storageErr) {
 				slog.Error(fmt.Sprintf("PERSISTENCE ERROR: %s", storageErr.Error()))
-				rest.InternalServerErrorResponse(w)
+				rest.InternalServerErrorResponse[any](w)
 				return
 			}
 
 			slog.Error(fmt.Sprintf("UNEXPECTED ERROR: %s", err.Error()))
-			rest.InternalServerErrorResponse(w)
+			rest.InternalServerErrorResponse[any](w)
 			return
 		}
 
-		rest.CreatedResponse(w, "gift request")
+		rest.CreatedResponse[any](w, "gift request")
 	}
 }

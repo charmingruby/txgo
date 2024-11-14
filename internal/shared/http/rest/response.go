@@ -5,16 +5,16 @@ import (
 	"net/http"
 )
 
-type Response struct {
+type Response[T any] struct {
 	Code    int    `json:"code"`
 	Message string `json:"message,omitempty"`
-	Data    any    `json:"data,omitempty"`
+	Data    T      `json:"data,omitempty"`
 }
 
-func newResponse(w http.ResponseWriter, code int, message string, data any) {
+func newResponse[T any](w http.ResponseWriter, code int, message string, data T) {
 	w.Header().Add("Content-Type", "application/json")
 
-	res := Response{
+	res := Response[T]{
 		Code:    code,
 		Message: message,
 		Data:    data,
@@ -26,34 +26,34 @@ func newResponse(w http.ResponseWriter, code int, message string, data any) {
 	w.Write(jsonRes)
 }
 
-func BadRequestErrorResponse(w http.ResponseWriter, message string) {
-	newResponse(w, http.StatusBadRequest, message, nil)
+func BadRequestErrorResponse[T any](w http.ResponseWriter, message string) {
+	newResponse[*T](w, http.StatusBadRequest, message, nil)
 }
 
-func NotFoundErrorResponse(w http.ResponseWriter, message string) {
-	newResponse(w, http.StatusNotFound, message, nil)
+func NotFoundErrorResponse[T any](w http.ResponseWriter, message string) {
+	newResponse[*T](w, http.StatusNotFound, message, nil)
 }
 
-func ModelValidationErrorResponse(w http.ResponseWriter, message string) {
-	newResponse(w, http.StatusUnprocessableEntity, message, nil)
+func ModelValidationErrorResponse[T any](w http.ResponseWriter, message string) {
+	newResponse[*T](w, http.StatusUnprocessableEntity, message, nil)
 }
 
-func ConflictErrorResponse(w http.ResponseWriter, message string) {
-	newResponse(w, http.StatusConflict, message, nil)
+func ConflictErrorResponse[T any](w http.ResponseWriter, message string) {
+	newResponse[*T](w, http.StatusConflict, message, nil)
 }
 
-func ForbiddenErrorResponse(w http.ResponseWriter, message string) {
-	newResponse(w, http.StatusForbidden, message, nil)
+func ForbiddenErrorResponse[T any](w http.ResponseWriter, message string) {
+	newResponse[*T](w, http.StatusForbidden, message, nil)
 }
 
-func InternalServerErrorResponse(w http.ResponseWriter) {
-	newResponse(w, http.StatusInternalServerError, "internal server error", nil)
+func InternalServerErrorResponse[T any](w http.ResponseWriter) {
+	newResponse[*T](w, http.StatusInternalServerError, "internal server error", nil)
 }
 
-func CreatedResponse(w http.ResponseWriter, createdResource string) {
-	newResponse(w, http.StatusCreated, createdResource+" created successfully", nil)
+func CreatedResponse[T any](w http.ResponseWriter, createdResource string) {
+	newResponse[*T](w, http.StatusCreated, createdResource+" created successfully", nil)
 }
 
-func OkResponse(w http.ResponseWriter, message string) {
-	newResponse(w, http.StatusOK, message, nil)
+func OkResponse[T any](w http.ResponseWriter, message string, data T) {
+	newResponse[*T](w, http.StatusOK, message, &data)
 }
