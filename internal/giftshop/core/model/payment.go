@@ -82,7 +82,7 @@ func (p *Payment) validate() error {
 		return core_err.NewModelErr("installments must be greater than or equal to 1")
 	}
 
-	if p.taxPercent <= 0 {
+	if p.taxPercent < 0 {
 		return core_err.NewModelErr("taxPercent must be greater than or equal to 0")
 	}
 

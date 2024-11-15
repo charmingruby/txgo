@@ -9,6 +9,7 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/response"
+	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 	"github.com/charmingruby/txgo/test/factory"
 	"github.com/charmingruby/txgo/test/integration"
 )
@@ -81,17 +82,146 @@ func (s *Suite) Test_GiftCheckoutHandler() {
 		s.Equal(decodedRes.Data.PaymentID, modifiedGift.PaymentID())
 	})
 
-	// s.Run("it should be not able to checkout a payment with invalid payload", func() {})
+	s.Run("it should be not able to checkout a payment with invalid payload", func() {
+		senderWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{
+			Points: 100,
+		})
+		s.NoError(err)
 
-	// s.Run("", func() {})
+		receiverWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{})
+		s.NoError(err)
 
-	// s.Run("", func() {})
+		gift, err := factory.MakeGift(s.giftRepo, model.NewGiftFromInput{
+			SenderWalletID:   senderWallet.ID(),
+			ReceiverWalletID: receiverWallet.ID(),
+			BaseValue:        100,
+		})
+		s.NoError(err)
 
-	// s.Run("", func() {})
+		payload := request.GiftCheckoutRequest{
+			TaxPercent:   -10,
+			Installments: 1,
+		}
 
-	// s.Run("", func() {})
+		body, err := json.Marshal(payload)
+		s.NoError(err)
 
-	// s.Run("", func() {})
+		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		s.NoError(err)
 
-	// s.Run("", func() {})
+		s.Equal(http.StatusBadRequest, httpRes.StatusCode)
+
+		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+
+		s.NoError(err)
+		s.Equal(decodedRes.Code, http.StatusBadRequest)
+		s.Equal(decodedRes.Message, "request validation failed: Key: 'GiftCheckoutRequest.TaxPercent' Error:Field validation for 'TaxPercent' failed on the 'min' tag")
+	})
+
+	s.Run("it should be not able to checkout a gift if doesn't exists", func() {
+		payload := request.GiftCheckoutRequest{
+			TaxPercent:   10,
+			Installments: 1,
+		}
+
+		body, err := json.Marshal(payload)
+		s.NoError(err)
+
+		httpRes, err := http.Post(url("ïnvalid-id"), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		s.NoError(err)
+
+		s.Equal(http.StatusNotFound, httpRes.StatusCode)
+
+		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+
+		s.NoError(err)
+		s.Equal(decodedRes.Code, http.StatusNotFound)
+		s.Equal(decodedRes.Message, core_err.NewResourceNotFoundErr("gift").Error())
+	})
+
+	s.Run("it should be not able to checkout a gift if already have a payment attached", func() {
+		tax := 10
+		giftValue := 1000
+		giftValueWithTax := giftValue + (giftValue * tax / 100)
+
+		walletExtraBalance := 1
+		walletBaseBalance := giftValueWithTax + walletExtraBalance
+
+		senderWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{
+			Points: walletBaseBalance,
+		})
+		s.NoError(err)
+
+		receiverWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{})
+		s.NoError(err)
+
+		payment, err := factory.MakePayment(s.paymentRepo, model.NewPaymentFromInput{})
+		s.NoError(err)
+
+		gift, err := factory.MakeGift(s.giftRepo, model.NewGiftFromInput{
+			SenderWalletID:   senderWallet.ID(),
+			ReceiverWalletID: receiverWallet.ID(),
+			BaseValue:        giftValue,
+			PaymentID:        payment.ID(),
+		})
+		s.NoError(err)
+
+		payload := request.GiftCheckoutRequest{
+			TaxPercent:   tax,
+			Installments: 1,
+		}
+
+		body, err := json.Marshal(payload)
+		s.NoError(err)
+
+		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		s.NoError(err)
+
+		s.Equal(http.StatusConflict, httpRes.StatusCode)
+
+		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+
+		s.NoError(err)
+		s.Equal(decodedRes.Code, http.StatusConflict)
+		s.Equal(decodedRes.Message, core_err.NewResourceAlreadyExistsErr("payment").Error())
+	})
+
+	s.Run("it should be not able to checkout a gift if wallet doesn't have enough points", func() {
+		giftValue := 1000
+		walletBaseBalance := giftValue - 1
+
+		senderWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{
+			Points: walletBaseBalance,
+		})
+		s.NoError(err)
+
+		receiverWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{})
+		s.NoError(err)
+
+		gift, err := factory.MakeGift(s.giftRepo, model.NewGiftFromInput{
+			SenderWalletID:   senderWallet.ID(),
+			ReceiverWalletID: receiverWallet.ID(),
+			BaseValue:        giftValue,
+		})
+		s.NoError(err)
+
+		payload := request.GiftCheckoutRequest{
+			TaxPercent:   0,
+			Installments: 1,
+		}
+
+		body, err := json.Marshal(payload)
+		s.NoError(err)
+
+		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		s.NoError(err)
+
+		s.Equal(http.StatusForbidden, httpRes.StatusCode)
+
+		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+
+		s.NoError(err)
+		s.Equal(decodedRes.Code, http.StatusForbidden)
+		s.Equal(decodedRes.Message, core_err.NewInvalidFundsErr(1).Error())
+	})
 }
