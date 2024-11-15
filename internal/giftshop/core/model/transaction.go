@@ -36,6 +36,24 @@ func NewTransaction(in NewTransactionInput) (*Transaction, error) {
 	return &t, nil
 }
 
+type NewTransactionFromInput struct {
+	ID            string
+	Points        int
+	PayerWalletID string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}
+
+func NewTransactionFrom(in NewTransactionFromInput) *Transaction {
+	return &Transaction{
+		id:            in.ID,
+		points:        in.Points,
+		payerWalletID: in.PayerWalletID,
+		createdAt:     in.CreatedAt,
+		updatedAt:     in.UpdatedAt,
+	}
+}
+
 func (t *Transaction) validate() error {
 	if t.points <= 0 {
 		return core_err.NewModelErr("points must be greater than 0")

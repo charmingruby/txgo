@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
@@ -18,6 +19,46 @@ func NewPaymentRepository(db *sql.DB) *PaymentRepository {
 
 type PaymentRepository struct {
 	db *sql.DB
+}
+
+type paymentRow struct {
+	ID            string
+	Installments  int
+	TaxPercent    int
+	PartialValue  int
+	TotalValue    int
+	Status        string
+	TransactionID string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}
+
+func (r *PaymentRepository) FindByID(id string) (*model.Payment, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", PAYMENTS_TABLE)
+
+	queryResult := r.db.QueryRow(query, id)
+
+	var row paymentRow
+
+	if err := queryResult.Scan(
+		&row.ID,
+		&row.Installments,
+		&row.TaxPercent,
+		&row.PartialValue,
+		&row.TotalValue,
+		&row.Status,
+		&row.TransactionID,
+		&row.CreatedAt,
+		&row.UpdatedAt,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, core_err.NewPersistenceErr(err, "payment find_by_id", "mysql")
+	}
+
+	return r.mapToDomain(row), nil
 }
 
 func (r *PaymentRepository) Store(payment *model.Payment) error {
@@ -51,4 +92,18 @@ func (r *PaymentRepository) UpdateTransactionIDAndStatusByID(payment *model.Paym
 	}
 
 	return nil
+}
+
+func (r *PaymentRepository) mapToDomain(payment paymentRow) *model.Payment {
+	return model.NewPaymentFrom(model.NewPaymentFromInput{
+		ID:            payment.ID,
+		Installments:  payment.Installments,
+		TaxPercent:    payment.TaxPercent,
+		PartialValue:  payment.PartialValue,
+		Status:        payment.Status,
+		TotalValue:    payment.TotalValue,
+		TransactionID: payment.TransactionID,
+		CreatedAt:     payment.CreatedAt,
+		UpdatedAt:     payment.UpdatedAt,
+	})
 }

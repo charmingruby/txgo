@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+	"github.com/charmingruby/txgo/internal/shared/helper"
 )
 
 const (
@@ -61,6 +62,8 @@ func (r *GiftRepository) FindByID(id string) (*model.Gift, error) {
 
 		return nil, core_err.NewPersistenceErr(err, "gift find_by_id", "mysql")
 	}
+
+	row.PaymentID = helper.If[string](paymentID.Valid, paymentID.String, "")
 
 	return r.mapToDomain(row), nil
 }
