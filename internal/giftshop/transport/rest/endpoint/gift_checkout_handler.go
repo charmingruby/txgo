@@ -10,7 +10,7 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/response"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
-	"github.com/charmingruby/txgo/internal/shared/http/rest"
+	"github.com/charmingruby/txgo/internal/shared/transport/rest"
 	"github.com/go-chi/chi/v5"
 )
 

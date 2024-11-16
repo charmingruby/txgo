@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/charmingruby/txgo/internal/shared/http/rest"
+	"github.com/charmingruby/txgo/internal/shared/transport/rest"
 )
 
 const (

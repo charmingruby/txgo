@@ -14,7 +14,7 @@ import (
 
 	"github.com/charmingruby/txgo/config"
 	"github.com/charmingruby/txgo/internal/giftshop"
-	"github.com/charmingruby/txgo/internal/shared/http/rest"
+	"github.com/charmingruby/txgo/internal/shared/transport/rest"
 	"github.com/charmingruby/txgo/pkg/mysql"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
