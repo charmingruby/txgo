@@ -224,6 +224,7 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		s.Equal(decodedRes.Code, http.StatusForbidden)
 		s.Equal(decodedRes.Message, core_err.NewInvalidFundsErr(1).Error())
 	})
+
 }
 
 func (s *Suite) Test_GiftCheckoutHandler_Transaction() {}

@@ -43,7 +43,14 @@ func (s *Suite) SetupTest() {
 	s.transactionRepo = mysql.NewTransactionRepository(s.dbContainer.DB)
 	s.paymentRepo = mysql.NewPaymentRepository(s.dbContainer.DB)
 
-	service := service.New(s.paymentRepo, s.giftRepo, s.walletRepo, s.transactionRepo)
+	transactionalConsistencyProvider := mysql.NewTransactionConsistencyProvider(s.dbContainer.DB)
+
+	service := service.New(
+		s.paymentRepo,
+		s.giftRepo,
+		s.walletRepo,
+		s.transactionRepo,
+		transactionalConsistencyProvider)
 
 	server := rest.NewServer("3000", router)
 

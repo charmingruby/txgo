@@ -13,12 +13,12 @@ const (
 	WALLETS_TABLE = "wallets"
 )
 
-func NewWalletRepository(db *sql.DB) *WalletRepository {
+func NewWalletRepository(db db) *WalletRepository {
 	return &WalletRepository{db: db}
 }
 
 type WalletRepository struct {
-	db *sql.DB
+	db db
 }
 
 type walletRow struct {

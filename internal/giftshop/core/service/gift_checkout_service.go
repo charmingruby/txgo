@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/charmingruby/txgo/internal/giftshop/core/logic"
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
@@ -17,6 +18,8 @@ type GiftCheckoutResult struct {
 }
 
 func (s *Service) GiftCheckoutService(params GiftCheckoutParams) (GiftCheckoutResult, error) {
+	result := GiftCheckoutResult{}
+
 	gift, err := s.giftRepo.FindByID(params.GiftID)
 	if err != nil {
 		return GiftCheckoutResult{}, err
@@ -39,67 +42,69 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) (GiftCheckoutRe
 		return GiftCheckoutResult{}, core_err.NewResourceNotFoundErr("sender wallet")
 	}
 
-	partialValue := calculatePartialValue(gift.BaseValue(), params.TaxPercent, params.Installments)
+	err = s.transactionalConsistencyProvider.Transact(func(tc logic.TransactionalConsistencyParams) error {
+		partialValue := calculatePartialValue(gift.BaseValue(), params.TaxPercent, params.Installments)
+		pointsDiff := senderWallet.Points() - partialValue
 
-	pointsDiff := senderWallet.Points() - partialValue
+		if pointsDiff < 0 {
+			return core_err.NewInvalidFundsErr(pointsDiff * -1)
+		}
 
-	if pointsDiff < 0 {
-		return GiftCheckoutResult{}, core_err.NewInvalidFundsErr(pointsDiff * -1)
-	}
+		newPaymentInput := model.NewPaymentInput{
+			Installments: params.Installments,
+			TaxPercent:   params.TaxPercent,
+			TotalValue:   gift.BaseValue(),
+		}
 
-	newPaymentInput := model.NewPaymentInput{
-		Installments: params.Installments,
-		TaxPercent:   params.TaxPercent,
-		TotalValue:   gift.BaseValue(),
-	}
+		payment, err := model.NewPayment(newPaymentInput)
+		if err != nil {
+			return err
+		}
 
-	payment, err := model.NewPayment(newPaymentInput)
-	if err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		payment.SetPartialValue(partialValue)
+		if err := tc.PaymentRepository.Store(payment); err != nil {
+			return err
+		}
 
-	payment.SetPartialValue(partialValue)
+		transactionInput := model.NewTransactionInput{
+			Points:        payment.PartialValue(),
+			PayerWalletID: gift.SenderWalletID(),
+		}
 
-	if err := s.paymentRepo.Store(payment); err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		transaction, err := model.NewTransaction(transactionInput)
+		if err != nil {
+			return err
+		}
 
-	transactionInput := model.NewTransactionInput{
-		Points:        payment.PartialValue(),
-		PayerWalletID: gift.SenderWalletID(),
-	}
+		if err := tc.TransactionRepository.Store(transaction); err != nil {
+			return err
+		}
 
-	transaction, err := model.NewTransaction(transactionInput)
-	if err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		newWalletBalance := senderWallet.Points() - payment.PartialValue()
+		senderWallet.SetPoints(newWalletBalance)
+		if err := tc.WalletRepository.UpdatePointsByID(senderWallet); err != nil {
+			return err
+		}
 
-	if err := s.transactionRepo.Store(transaction); err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		payment.Paid()
+		payment.SetTransactionID(transaction.ID())
+		if err := tc.PaymentRepository.UpdateTransactionIDAndStatusByID(payment); err != nil {
+			return err
+		}
 
-	newWalletBalance := senderWallet.Points() - payment.PartialValue()
-	senderWallet.SetPoints(newWalletBalance)
-	if err := s.walletRepo.UpdatePointsByID(senderWallet); err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		gift.Sent()
+		gift.SetPaymentID(payment.ID())
+		if err := tc.GiftRepository.UpdatePaymentIDAndStatusByID(gift); err != nil {
+			return err
+		}
 
-	payment.Paid()
-	payment.SetTransactionID(transaction.ID())
-	if err := s.paymentRepo.UpdateTransactionIDAndStatusByID(payment); err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		result.PaymentID = payment.ID()
+		result.TransactionID = transaction.ID()
 
-	gift.Sent()
-	gift.SetPaymentID(payment.ID())
-	if err := s.giftRepo.UpdatePaymentIDAndStatusByID(gift); err != nil {
-		return GiftCheckoutResult{}, err
-	}
+		return nil
+	})
 
-	return GiftCheckoutResult{
-		PaymentID:     payment.ID(),
-		TransactionID: transaction.ID(),
-	}, nil
+	return result, err
 }
 
 func calculatePartialValue(totalValue, taxPercent, installments int) int {

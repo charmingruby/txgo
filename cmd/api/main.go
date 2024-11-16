@@ -92,8 +92,9 @@ func initDependencies(r *chi.Mux, db *sql.DB) {
 	giftRepository := giftshop.NewGiftRepository(db)
 	transactionRepository := giftshop.NewTransactionRepository(db)
 	paymentRepository := giftshop.NewPaymentRepository(db)
+	transactionalConsistencyProvider := giftshop.NewTransactionConsistencyProvider(db)
 
-	giftshopSvc := giftshop.NewService(walletRepository, giftRepository, paymentRepository, transactionRepository)
+	giftshopSvc := giftshop.NewService(walletRepository, giftRepository, paymentRepository, transactionRepository, transactionalConsistencyProvider)
 
 	giftshop.NewHTTPHandler(r, giftshopSvc)
 }

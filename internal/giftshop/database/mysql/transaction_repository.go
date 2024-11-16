@@ -13,12 +13,12 @@ const (
 	TRANSACTIONS_TABLE = "transactions"
 )
 
-func NewTransactionRepository(db *sql.DB) *TransactionRepository {
+func NewTransactionRepository(db db) *TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
 type TransactionRepository struct {
-	db *sql.DB
+	db db
 }
 
 type transactionRow struct {

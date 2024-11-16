@@ -14,12 +14,12 @@ const (
 	GIFTS_TABLE = "gifts"
 )
 
-func NewGiftRepository(db *sql.DB) *GiftRepository {
+func NewGiftRepository(db db) *GiftRepository {
 	return &GiftRepository{db: db}
 }
 
 type GiftRepository struct {
-	db *sql.DB
+	db db
 }
 
 type giftRow struct {

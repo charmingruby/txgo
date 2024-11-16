@@ -13,12 +13,12 @@ const (
 	PAYMENTS_TABLE = "payments"
 )
 
-func NewPaymentRepository(db *sql.DB) *PaymentRepository {
+func NewPaymentRepository(db db) *PaymentRepository {
 	return &PaymentRepository{db: db}
 }
 
 type PaymentRepository struct {
-	db *sql.DB
+	db db
 }
 
 type paymentRow struct {

@@ -3,6 +3,7 @@ package giftshop
 import (
 	"database/sql"
 
+	"github.com/charmingruby/txgo/internal/giftshop/core/logic"
 	"github.com/charmingruby/txgo/internal/giftshop/core/repository"
 	"github.com/charmingruby/txgo/internal/giftshop/core/service"
 	"github.com/charmingruby/txgo/internal/giftshop/database/mysql"
@@ -15,8 +16,15 @@ func NewService(
 	giftRepository repository.GiftRepository,
 	paymentRepository repository.PaymentRepository,
 	transactionRepository repository.TransactionRepository,
+	transactionalConsistencyProvider logic.TransactionalConsistencyProvider,
 ) *service.Service {
-	return service.New(paymentRepository, giftRepository, walletRepository, transactionRepository)
+	return service.New(
+		paymentRepository,
+		giftRepository,
+		walletRepository,
+		transactionRepository,
+		transactionalConsistencyProvider,
+	)
 }
 
 func NewWalletRepository(db *sql.DB) repository.WalletRepository {
@@ -33,6 +41,10 @@ func NewPaymentRepository(db *sql.DB) repository.PaymentRepository {
 
 func NewTransactionRepository(db *sql.DB) repository.TransactionRepository {
 	return mysql.NewTransactionRepository(db)
+}
+
+func NewTransactionConsistencyProvider(db *sql.DB) *mysql.TransactionConsistencyProvider {
+	return mysql.NewTransactionConsistencyProvider(db)
 }
 
 func NewHTTPHandler(r *chi.Mux, service *service.Service) {
