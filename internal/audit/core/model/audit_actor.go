@@ -47,3 +47,23 @@ func (a *AuditActor) validate() error {
 
 	return nil
 }
+
+func (a *AuditActor) ID() string {
+	return a.id
+}
+
+func (a *AuditActor) Email() string {
+	return a.email
+}
+
+func (a *AuditActor) AuditID() string {
+	return a.auditID
+}
+
+func (a *AuditActor) CreatedAt() time.Time {
+	return a.createdAt
+}
+
+func (a *AuditActor) UpdatedAt() time.Time {
+	return a.updatedAt
+}

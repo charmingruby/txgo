@@ -54,3 +54,27 @@ func (p *Audit) validate() error {
 
 	return nil
 }
+
+func (a *Audit) ID() string {
+	return a.id
+}
+
+func (a *Audit) Module() string {
+	return a.module
+}
+
+func (a *Audit) Context() string {
+	return a.context
+}
+
+func (a *Audit) Message() string {
+	return a.message
+}
+
+func (a *Audit) CreatedAt() time.Time {
+	return a.createdAt
+}
+
+func (a *Audit) UpdatedAt() time.Time {
+	return a.updatedAt
+}
