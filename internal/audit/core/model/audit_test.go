@@ -8,50 +8,31 @@ import (
 )
 
 func Test_NewAudit(t *testing.T) {
-	dummyActorEmail1 := "actor1@email.com"
-	dummyActorEmail2 := "actor2@email.com"
+	dummyModule := "dummy module"
 	dummyContext := "dummy context"
-	dummyDescription := "dummy description"
+	dummyMessage := "dummy message"
 
-	t.Run("it should be able to create a payment movimentation audit with valid params", func(t *testing.T) {
-		actors := []string{dummyActorEmail1, dummyActorEmail2}
-
+	t.Run("it should be able to create an audit with valid params", func(t *testing.T) {
 		input := NewAuditInput{
-			actors:      actors,
-			context:     dummyContext,
-			description: dummyDescription,
+			Module:  dummyModule,
+			Context: dummyContext,
+			Message: dummyMessage,
 		}
 
 		audit, err := NewAudit(input)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, audit)
-		assert.Equal(t, len(actors), len(audit.actors))
+		assert.Equal(t, dummyModule, audit.module)
 		assert.Equal(t, dummyContext, audit.context)
-		assert.Equal(t, dummyDescription, audit.description)
+		assert.Equal(t, dummyMessage, audit.message)
 	})
 
-	t.Run("it should not be able to create a payment movimentation audit with empty actors", func(t *testing.T) {
+	t.Run("it should not be able to create an audit with empty context", func(t *testing.T) {
 		input := NewAuditInput{
-			actors:      []string{},
-			context:     dummyContext,
-			description: dummyDescription,
-		}
-
-		audit, err := NewAudit(input)
-
-		assert.Nil(t, audit)
-		assert.Error(t, err)
-		assert.Equal(t, core_err.NewModelErr("actors are required").Error(), err.Error())
-	})
-
-	t.Run("it should not be able to create a payment movimentation audit with empty context", func(t *testing.T) {
-		actors := []string{dummyActorEmail1, dummyActorEmail2}
-
-		input := NewAuditInput{
-			actors:      actors,
-			context:     "",
-			description: dummyDescription,
+			Module:  dummyModule,
+			Context: "",
+			Message: dummyMessage,
 		}
 
 		audit, err := NewAudit(input)
@@ -61,19 +42,31 @@ func Test_NewAudit(t *testing.T) {
 		assert.Equal(t, core_err.NewModelErr("context is required").Error(), err.Error())
 	})
 
-	t.Run("it should not be able to create a payment movimentation audit with empty description", func(t *testing.T) {
-		actors := []string{dummyActorEmail1, dummyActorEmail2}
-
+	t.Run("it should not be able to create an audit with empty message", func(t *testing.T) {
 		input := NewAuditInput{
-			actors:      actors,
-			context:     dummyContext,
-			description: "",
+			Module:  dummyModule,
+			Context: dummyContext,
+			Message: "",
 		}
 
 		audit, err := NewAudit(input)
 
 		assert.Nil(t, audit)
 		assert.Error(t, err)
-		assert.Equal(t, core_err.NewModelErr("description is required").Error(), err.Error())
+		assert.Equal(t, core_err.NewModelErr("message is required").Error(), err.Error())
+	})
+
+	t.Run("it should not be able to create an audit with empty module", func(t *testing.T) {
+		input := NewAuditInput{
+			Module:  "",
+			Context: dummyContext,
+			Message: dummyMessage,
+		}
+
+		audit, err := NewAudit(input)
+
+		assert.Nil(t, audit)
+		assert.Error(t, err)
+		assert.Equal(t, core_err.NewModelErr("module is required").Error(), err.Error())
 	})
 }

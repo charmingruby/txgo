@@ -8,28 +8,28 @@ import (
 )
 
 type Audit struct {
-	id          string
-	actors      []string
-	context     string
-	description string
-	createdAt   time.Time
-	updatedAt   time.Time
+	id        string
+	module    string
+	context   string
+	message   string
+	createdAt time.Time
+	updatedAt time.Time
 }
 
 type NewAuditInput struct {
-	actors      []string
-	context     string
-	description string
+	Module  string
+	Context string
+	Message string
 }
 
 func NewAudit(in NewAuditInput) (*Audit, error) {
 	p := Audit{
-		id:          core.NewID(),
-		actors:      in.actors,
-		context:     in.context,
-		description: in.description,
-		createdAt:   time.Now(),
-		updatedAt:   time.Now(),
+		id:        core.NewID(),
+		module:    in.Module,
+		context:   in.Context,
+		message:   in.Message,
+		createdAt: time.Now(),
+		updatedAt: time.Now(),
 	}
 
 	if err := p.validate(); err != nil {
@@ -40,16 +40,16 @@ func NewAudit(in NewAuditInput) (*Audit, error) {
 }
 
 func (p *Audit) validate() error {
-	if len(p.actors) == 0 {
-		return core_err.NewModelErr("actors are required")
+	if p.module == "" {
+		return core_err.NewModelErr("module is required")
 	}
 
 	if p.context == "" {
 		return core_err.NewModelErr("context is required")
 	}
 
-	if p.description == "" {
-		return core_err.NewModelErr("description is required")
+	if p.message == "" {
+		return core_err.NewModelErr("message is required")
 	}
 
 	return nil
