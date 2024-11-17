@@ -7,18 +7,19 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+	"github.com/charmingruby/txgo/internal/shared/database/mysql"
 )
 
 const (
 	TRANSACTIONS_TABLE = "transactions"
 )
 
-func NewTransactionRepository(db db) *TransactionRepository {
+func NewTransactionRepository(db mysql.Database) *TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
 type TransactionRepository struct {
-	db db
+	db mysql.Database
 }
 
 type transactionRow struct {

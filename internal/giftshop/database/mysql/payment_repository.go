@@ -7,18 +7,19 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+	"github.com/charmingruby/txgo/internal/shared/database/mysql"
 )
 
 const (
 	PAYMENTS_TABLE = "payments"
 )
 
-func NewPaymentRepository(db db) *PaymentRepository {
+func NewPaymentRepository(db mysql.Database) *PaymentRepository {
 	return &PaymentRepository{db: db}
 }
 
 type PaymentRepository struct {
-	db db
+	db mysql.Database
 }
 
 type paymentRow struct {

@@ -7,18 +7,19 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+	"github.com/charmingruby/txgo/internal/shared/database/mysql"
 )
 
 const (
 	WALLETS_TABLE = "wallets"
 )
 
-func NewWalletRepository(db db) *WalletRepository {
+func NewWalletRepository(db mysql.Database) *WalletRepository {
 	return &WalletRepository{db: db}
 }
 
 type WalletRepository struct {
-	db db
+	db mysql.Database
 }
 
 type walletRow struct {

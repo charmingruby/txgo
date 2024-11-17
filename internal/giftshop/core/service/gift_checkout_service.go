@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/charmingruby/txgo/internal/giftshop/core/logic"
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 )
@@ -42,7 +41,7 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) (GiftCheckoutRe
 		return GiftCheckoutResult{}, core_err.NewResourceNotFoundErr("sender wallet")
 	}
 
-	err = s.transactionalConsistencyProvider.Transact(func(tc logic.TransactionalConsistencyParams) error {
+	err = s.transactionalConsistencyProvider.Transact(func(tc TransactionalConsistencyParams) error {
 		partialValue := calculatePartialValue(gift.BaseValue(), params.TaxPercent, params.Installments)
 		pointsDiff := senderWallet.Points() - partialValue
 

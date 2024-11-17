@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
+	"github.com/charmingruby/txgo/internal/shared/database/mysql"
 	"github.com/charmingruby/txgo/internal/shared/helper"
 )
 
@@ -14,12 +15,12 @@ const (
 	GIFTS_TABLE = "gifts"
 )
 
-func NewGiftRepository(db db) *GiftRepository {
+func NewGiftRepository(db mysql.Database) *GiftRepository {
 	return &GiftRepository{db: db}
 }
 
 type GiftRepository struct {
-	db db
+	db mysql.Database
 }
 
 type giftRow struct {

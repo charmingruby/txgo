@@ -1,16 +1,23 @@
 package service
 
 import (
-	"github.com/charmingruby/txgo/internal/giftshop/core/logic"
 	"github.com/charmingruby/txgo/internal/giftshop/core/repository"
+	"github.com/charmingruby/txgo/internal/shared/core"
 )
+
+type TransactionalConsistencyParams struct {
+	GiftRepository        repository.GiftRepository
+	PaymentRepository     repository.PaymentRepository
+	TransactionRepository repository.TransactionRepository
+	WalletRepository      repository.WalletRepository
+}
 
 type Service struct {
 	paymentRepo                      repository.PaymentRepository
 	giftRepo                         repository.GiftRepository
 	walletRepo                       repository.WalletRepository
 	transactionRepo                  repository.TransactionRepository
-	transactionalConsistencyProvider logic.TransactionalConsistencyProvider
+	transactionalConsistencyProvider core.TransactionalConsistencyProvider[TransactionalConsistencyParams]
 }
 
 func New(
@@ -18,7 +25,7 @@ func New(
 	giftRepo repository.GiftRepository,
 	walletRepo repository.WalletRepository,
 	transactionRepo repository.TransactionRepository,
-	transactionalConsistencyProvider logic.TransactionalConsistencyProvider,
+	transactionalConsistencyProvider core.TransactionalConsistencyProvider[TransactionalConsistencyParams],
 ) *Service {
 	return &Service{
 		paymentRepo:                      paymentRepo,
