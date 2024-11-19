@@ -10,7 +10,7 @@ func Test_NewPlan(t *testing.T) {
 	dummyName := "dummy plan name"
 	dummyDescription := "dummy plan description"
 	dummyAmount := 1000
-	dummyInterval := "monthly"
+	dummyPeriodicity := UNDEFINED_PLAN_PERIODICITY
 	dummyTrialPeriodDays := 30
 
 	t.Run("it should be able to create a plan with valid params", func(t *testing.T) {
@@ -19,7 +19,7 @@ func Test_NewPlan(t *testing.T) {
 				Name:            dummyName,
 				Description:     dummyDescription,
 				Amount:          dummyAmount,
-				Interval:        dummyInterval,
+				Periodicity:     dummyPeriodicity,
 				TrialPeriodDays: dummyTrialPeriodDays,
 			},
 		)
@@ -28,7 +28,7 @@ func Test_NewPlan(t *testing.T) {
 		assert.Equal(t, dummyName, plan.name)
 		assert.Equal(t, dummyDescription, plan.description)
 		assert.Equal(t, dummyAmount, plan.amount)
-		assert.Equal(t, dummyInterval, plan.interval)
+		assert.Equal(t, dummyPeriodicity, plan.periodicity)
 		assert.Equal(t, dummyTrialPeriodDays, plan.trialPeriodDays)
 	})
 }

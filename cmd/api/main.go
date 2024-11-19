@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/charmingruby/txgo/config"
+	"github.com/charmingruby/txgo/internal/billing"
 	"github.com/charmingruby/txgo/internal/giftshop"
 	"github.com/charmingruby/txgo/internal/shared/transport/rest"
 	"github.com/charmingruby/txgo/pkg/mysql"
@@ -95,6 +96,10 @@ func initDependencies(r *chi.Mux, db *sql.DB) {
 	transactionalConsistencyProvider := giftshop.NewTransactionConsistencyProvider(db)
 
 	giftshopSvc := giftshop.NewService(walletRepository, giftRepository, paymentRepository, transactionRepository, transactionalConsistencyProvider)
-
 	giftshop.NewHTTPHandler(r, giftshopSvc)
+
+	planRepository := billing.NewPlanRepository(db)
+
+	billingSvc := billing.NewService(planRepository)
+	billing.NewHTTPHandler(r, billingSvc)
 }
