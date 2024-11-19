@@ -10,8 +10,8 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/response"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
-	"github.com/charmingruby/txgo/test/factory"
-	"github.com/charmingruby/txgo/test/integration"
+	"github.com/charmingruby/txgo/test/giftshop/factory"
+	"github.com/charmingruby/txgo/test/shared/helper"
 )
 
 func (s *Suite) Test_GiftCheckoutHandler_Base() {
@@ -50,12 +50,12 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url(gift.ID()), helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusOK, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+		decodedRes, err := helper.DecodeResponse[response.GiftCheckoutResponse](httpRes)
 
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusOK)
@@ -106,12 +106,12 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url(gift.ID()), helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+		decodedRes, err := helper.DecodeResponse[response.GiftCheckoutResponse](httpRes)
 
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusBadRequest)
@@ -127,12 +127,12 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url("ïnvalid-id"), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url("ïnvalid-id"), helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusNotFound, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+		decodedRes, err := helper.DecodeResponse[response.GiftCheckoutResponse](httpRes)
 
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusNotFound)
@@ -174,12 +174,12 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url(gift.ID()), helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusConflict, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+		decodedRes, err := helper.DecodeResponse[response.GiftCheckoutResponse](httpRes)
 
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusConflict)
@@ -213,12 +213,12 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url(gift.ID()), integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url(gift.ID()), helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusForbidden, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+		decodedRes, err := helper.DecodeResponse[response.GiftCheckoutResponse](httpRes)
 
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusForbidden)

@@ -9,7 +9,7 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/database/mysql"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/endpoint"
 	"github.com/charmingruby/txgo/internal/shared/transport/rest"
-	"github.com/charmingruby/txgo/test/integration/container"
+	"github.com/charmingruby/txgo/test/shared/container"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/suite"
 )

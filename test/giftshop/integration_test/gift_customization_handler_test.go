@@ -9,8 +9,8 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/core/model"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/dto/request"
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
-	"github.com/charmingruby/txgo/test/factory"
-	"github.com/charmingruby/txgo/test/integration"
+	"github.com/charmingruby/txgo/test/giftshop/factory"
+	"github.com/charmingruby/txgo/test/shared/helper"
 )
 
 func (s *Suite) Test_GiftCustomizationHandler() {
@@ -35,12 +35,12 @@ func (s *Suite) Test_GiftCustomizationHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusCreated, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[any](httpRes)
+		decodedRes, err := helper.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusCreated)
 		s.Equal(decodedRes.Message, "gift request created successfully")
@@ -59,12 +59,12 @@ func (s *Suite) Test_GiftCustomizationHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusBadRequest, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[any](httpRes)
+		decodedRes, err := helper.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusBadRequest)
 		s.Equal(decodedRes.Message, "request validation failed: Key: 'GiftCustomizationRequest.SenderEmail' Error:Field validation for 'SenderEmail' failed on the 'email' tag")
@@ -86,12 +86,12 @@ func (s *Suite) Test_GiftCustomizationHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusNotFound, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[any](httpRes)
+		decodedRes, err := helper.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusNotFound)
 		s.Equal(decodedRes.Message, core_err.NewResourceNotFoundErr("gift sender").Error())
@@ -113,12 +113,12 @@ func (s *Suite) Test_GiftCustomizationHandler() {
 		body, err := json.Marshal(payload)
 		s.NoError(err)
 
-		httpRes, err := http.Post(url, integration.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		httpRes, err := http.Post(url, helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
 		s.NoError(err)
 
 		s.Equal(http.StatusNotFound, httpRes.StatusCode)
 
-		decodedRes, err := integration.DecodeResponse[any](httpRes)
+		decodedRes, err := helper.DecodeResponse[any](httpRes)
 		s.NoError(err)
 		s.Equal(decodedRes.Code, http.StatusNotFound)
 		s.Equal(decodedRes.Message, core_err.NewResourceNotFoundErr("gift receiver").Error())
