@@ -1,4 +1,4 @@
-package giftshop_integration_test
+package integration_test
 
 import (
 	"bytes"
