@@ -1,5 +1,5 @@
 package integration
 
-type BillingSubscriptionStatusAPI interface {
+type BillingSubscriptionStatusIntegration interface {
 	IsSubscriptionActive(email string) bool
 }
