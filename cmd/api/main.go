@@ -99,7 +99,8 @@ func initDependencies(r *chi.Mux, db *sql.DB) {
 	giftshop.NewHTTPHandler(r, giftshopSvc)
 
 	planRepository := billing.NewPlanRepository(db)
+	subscriptionRepository := billing.NewSubscriptionRepository(db)
 
-	billingSvc := billing.NewService(planRepository)
+	billingSvc := billing.NewService(planRepository, subscriptionRepository)
 	billing.NewHTTPHandler(r, billingSvc)
 }

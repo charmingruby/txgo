@@ -22,4 +22,5 @@ func New(r *chi.Mux, service *service.Service) *Endpoint {
 
 func (e *Endpoint) Register() {
 	e.router.Post("/plans", e.createPlanHandler())
+	e.router.Post("/plans/{planID}/subscribe", e.subscribeOnPlanHandler())
 }

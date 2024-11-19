@@ -10,12 +10,16 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewService(planRepo repository.PlanRepository) *service.Service {
-	return service.New(planRepo)
+func NewService(planRepo repository.PlanRepository, subscriptionRepo repository.SubscriptionRepository) *service.Service {
+	return service.New(subscriptionRepo, planRepo)
 }
 
 func NewPlanRepository(db *sql.DB) repository.PlanRepository {
 	return mysql.NewPlanRepository(db)
+}
+
+func NewSubscriptionRepository(db *sql.DB) repository.SubscriptionRepository {
+	return mysql.NewSubscriptionRepository(db)
 }
 
 func NewHTTPHandler(r *chi.Mux, service *service.Service) {
