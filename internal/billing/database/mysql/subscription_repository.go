@@ -63,7 +63,7 @@ func (r *SubscriptionRepository) FindActiveByEmail(email string) (*model.Subscri
 }
 
 func (r *SubscriptionRepository) FindNonInactiveByEmailAndPlanID(email, planID string) (*model.Subscription, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id = ? AND plan_id = ? AND status IN (?, ?)", SUBSCRIPTIONS_TABLE)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE email = ? AND plan_id = ? AND status IN (?, ?)", SUBSCRIPTIONS_TABLE)
 
 	queryResult := r.db.QueryRow(query, email, planID, model.SUBSCRIPTION_STATUS_PENDING, model.SUBSCRIPTION_STATUS_ACTIVE)
 
