@@ -12,6 +12,7 @@ import (
 	"github.com/charmingruby/txgo/internal/shared/core/core_err"
 	"github.com/charmingruby/txgo/test/giftshop/factory"
 	"github.com/charmingruby/txgo/test/shared/helper"
+	"github.com/charmingruby/txgo/test/shared/integration"
 )
 
 func (s *Suite) Test_GiftCheckoutHandler_Base() {
@@ -40,6 +41,9 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 			ReceiverWalletID: receiverWallet.ID(),
 			BaseValue:        giftValue,
 		})
+		s.NoError(err)
+
+		err = integration.SubscribeOnPlan(s.dbContainer.DB, senderWallet.OwnerEmail())
 		s.NoError(err)
 
 		payload := request.GiftCheckoutRequest{
@@ -80,6 +84,49 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 		s.NoError(err)
 		s.Equal(model.GIFT_STATUS_SENT, modifiedGift.Status())
 		s.Equal(decodedRes.Data.PaymentID, modifiedGift.PaymentID())
+	})
+
+	s.Run("it should be not able to checkout a payment without any active plan", func() {
+		tax := 10
+		giftValue := 1000
+		giftValueWithTax := giftValue + (giftValue * tax / 100)
+
+		walletExtraBalance := 1
+		walletBaseBalance := giftValueWithTax + walletExtraBalance
+
+		senderWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{
+			Points: walletBaseBalance,
+		})
+		s.NoError(err)
+
+		receiverWallet, err := factory.MakeWallet(s.walletRepo, model.NewWalletFromInput{})
+		s.NoError(err)
+
+		gift, err := factory.MakeGift(s.giftRepo, model.NewGiftFromInput{
+			SenderWalletID:   senderWallet.ID(),
+			ReceiverWalletID: receiverWallet.ID(),
+			BaseValue:        giftValue,
+		})
+		s.NoError(err)
+
+		payload := request.GiftCheckoutRequest{
+			TaxPercent:   tax,
+			Installments: 1,
+		}
+
+		body, err := json.Marshal(payload)
+		s.NoError(err)
+
+		httpRes, err := http.Post(url(gift.ID()), helper.CONTENT_TYPE_JSON, bytes.NewReader(body))
+		s.NoError(err)
+
+		s.Equal(http.StatusForbidden, httpRes.StatusCode)
+
+		decodedRes, err := helper.DecodeResponse[response.GiftCheckoutResponse](httpRes)
+
+		s.NoError(err)
+		s.Equal(decodedRes.Code, http.StatusForbidden)
+		s.Equal(decodedRes.Message, "invalid user subscription")
 	})
 
 	s.Run("it should be not able to checkout a payment with invalid payload", func() {
@@ -203,6 +250,9 @@ func (s *Suite) Test_GiftCheckoutHandler_Base() {
 			ReceiverWalletID: receiverWallet.ID(),
 			BaseValue:        giftValue,
 		})
+		s.NoError(err)
+
+		err = integration.SubscribeOnPlan(s.dbContainer.DB, senderWallet.OwnerEmail())
 		s.NoError(err)
 
 		payload := request.GiftCheckoutRequest{
