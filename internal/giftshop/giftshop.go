@@ -8,6 +8,7 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/database/mysql"
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/endpoint"
 	"github.com/charmingruby/txgo/internal/shared/core"
+	"github.com/charmingruby/txgo/internal/shared/integration"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -17,6 +18,8 @@ func NewService(
 	paymentRepository repository.PaymentRepository,
 	transactionRepository repository.TransactionRepository,
 	transactionalConsistencyProvider core.TransactionalConsistencyProvider[service.TransactionalConsistencyParams],
+	billingSubscriptionStatusProvider integration.BillingSubscriptionStatusIntegration,
+
 ) *service.Service {
 	return service.New(
 		paymentRepository,
@@ -24,6 +27,7 @@ func NewService(
 		walletRepository,
 		transactionRepository,
 		transactionalConsistencyProvider,
+		billingSubscriptionStatusProvider,
 	)
 }
 

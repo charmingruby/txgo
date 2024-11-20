@@ -89,18 +89,19 @@ func main() {
 }
 
 func initDependencies(r *chi.Mux, db *sql.DB) {
+	planRepository := billing.NewPlanRepository(db)
+	subscriptionRepository := billing.NewSubscriptionRepository(db)
+
+	billingPublicProvider := billing.NewPublicProvider(subscriptionRepository)
+	billingSvc := billing.NewService(planRepository, subscriptionRepository)
+	billing.NewHTTPHandler(r, billingSvc)
+
 	walletRepository := giftshop.NewWalletRepository(db)
 	giftRepository := giftshop.NewGiftRepository(db)
 	transactionRepository := giftshop.NewTransactionRepository(db)
 	paymentRepository := giftshop.NewPaymentRepository(db)
 	transactionalConsistencyProvider := giftshop.NewTransactionConsistencyProvider(db)
 
-	giftshopSvc := giftshop.NewService(walletRepository, giftRepository, paymentRepository, transactionRepository, transactionalConsistencyProvider)
+	giftshopSvc := giftshop.NewService(walletRepository, giftRepository, paymentRepository, transactionRepository, transactionalConsistencyProvider, &billingPublicProvider)
 	giftshop.NewHTTPHandler(r, giftshopSvc)
-
-	planRepository := billing.NewPlanRepository(db)
-	subscriptionRepository := billing.NewSubscriptionRepository(db)
-
-	billingSvc := billing.NewService(planRepository, subscriptionRepository)
-	billing.NewHTTPHandler(r, billingSvc)
 }

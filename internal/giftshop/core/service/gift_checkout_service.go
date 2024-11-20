@@ -41,6 +41,10 @@ func (s *Service) GiftCheckoutService(params GiftCheckoutParams) (GiftCheckoutRe
 		return GiftCheckoutResult{}, core_err.NewResourceNotFoundErr("sender wallet")
 	}
 
+	if !s.billingSubscriptionStatusProvider.IsSubscriptionActive(senderWallet.OwnerEmail()) {
+		return GiftCheckoutResult{}, core_err.NewForbiddenActionErr("invalid user subscription")
+	}
+
 	err = s.transactionalConsistencyProvider.Transact(func(tc TransactionalConsistencyParams) error {
 		partialValue := calculatePartialValue(gift.BaseValue(), params.TaxPercent, params.Installments)
 		pointsDiff := senderWallet.Points() - partialValue

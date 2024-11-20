@@ -43,3 +43,17 @@ func NewResourceAlreadyExistsErr(resource string) *ResourceAlreadyExistsErr {
 func (e *ResourceAlreadyExistsErr) Error() string {
 	return e.Message
 }
+
+type ForbiddenActionErr struct {
+	Message string `json:"message"`
+}
+
+func NewForbiddenActionErr(reason string) *ForbiddenActionErr {
+	return &ForbiddenActionErr{
+		Message: reason,
+	}
+}
+
+func (e *ForbiddenActionErr) Error() string {
+	return e.Message
+}

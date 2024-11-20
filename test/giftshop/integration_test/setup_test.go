@@ -10,6 +10,7 @@ import (
 	"github.com/charmingruby/txgo/internal/giftshop/transport/rest/endpoint"
 	"github.com/charmingruby/txgo/internal/shared/transport/rest"
 	"github.com/charmingruby/txgo/test/shared/container"
+	"github.com/charmingruby/txgo/test/shared/integration"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/suite"
 )
@@ -50,7 +51,9 @@ func (s *Suite) SetupTest() {
 		s.giftRepo,
 		s.walletRepo,
 		s.transactionRepo,
-		transactionalConsistencyProvider)
+		transactionalConsistencyProvider,
+		integration.NewBillingSubscriptionProvider(s.dbContainer.DB),
+	)
 
 	server := rest.NewServer("3000", router)
 

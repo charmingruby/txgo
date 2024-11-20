@@ -6,6 +6,7 @@ import (
 	"github.com/charmingruby/txgo/internal/billing/core/repository"
 	"github.com/charmingruby/txgo/internal/billing/core/service"
 	"github.com/charmingruby/txgo/internal/billing/database/mysql"
+	"github.com/charmingruby/txgo/internal/billing/integration/provider"
 	"github.com/charmingruby/txgo/internal/billing/transport/rest/endpoint"
 	"github.com/go-chi/chi/v5"
 )
@@ -20,6 +21,10 @@ func NewPlanRepository(db *sql.DB) repository.PlanRepository {
 
 func NewSubscriptionRepository(db *sql.DB) repository.SubscriptionRepository {
 	return mysql.NewSubscriptionRepository(db)
+}
+
+func NewPublicProvider(subscriptionRepo repository.SubscriptionRepository) provider.Public {
+	return *provider.NewPublic(subscriptionRepo)
 }
 
 func NewHTTPHandler(r *chi.Mux, service *service.Service) {

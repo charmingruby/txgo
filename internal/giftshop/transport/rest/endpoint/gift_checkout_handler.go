@@ -60,6 +60,12 @@ func (e *Endpoint) giftCheckoutHandler() http.HandlerFunc {
 				return
 			}
 
+			var forbiddenActionErr *core_err.ForbiddenActionErr
+			if errors.As(err, &forbiddenActionErr) {
+				rest.ForbiddenErrorResponse[any](w, forbiddenActionErr.Error())
+				return
+			}
+
 			var storageErr *core_err.PersistenceErr
 			if errors.As(err, &storageErr) {
 				slog.Error(fmt.Sprintf("PERSISTENCE ERROR: %s", storageErr.Error()))
